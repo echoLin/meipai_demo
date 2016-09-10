@@ -12,7 +12,7 @@ class FollowsTableSeeder extends Seeder
     public function run()
     {
         $i = 0;
-    	while ($i<1000) {
+    	while ($i<100000) {
     		$uid = rand(1,2000);
     		$follow_uid = rand(1,2000);
     		while ($uid == $follow_uid) {

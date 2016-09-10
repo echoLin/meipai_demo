@@ -17,7 +17,7 @@ use Illuminate\Http\Request;
 Route::group(['middleware' => ['web']], function () {
 
 
-    // Route::get('/', 'MainController@index');
+    Route::get('/', 'MainController@index');
 
     // 认证路由...
     Route::get('/auth/login', 'Auth\AuthController@getLogin');

@@ -1,15 +1,13 @@
-# Laravel Quickstart - Basic
+# Laravel 5.2 meipai - Demo
 
 ## Quck Installation
 
-    git clone https://github.com/laravel/quickstart-basic quickstart
+    git clone https://github.com/echoLin/meipai_demo meipai
 
-    cd quickstart
+    cd meipai
 
     composer install
 
     php artisan migrate
 
     php artisan serve
-
-[Complete Tutorial](http://laravel.com/docs/quickstart)

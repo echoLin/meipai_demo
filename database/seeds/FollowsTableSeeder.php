@@ -13,10 +13,10 @@ class FollowsTableSeeder extends Seeder
     {
         $i = 0;
     	while ($i<100000) {
-    		$uid = rand(1,2000);
-    		$follow_uid = rand(1,2000);
+    		$uid = rand(1,5000);
+    		$follow_uid = rand(1,5000);
     		while ($uid == $follow_uid) {
-    			$follow_uid = rand(1,2000);
+    			$follow_uid = rand(1,5000);
     		}
             // $uid = rand(1,2000);
             // $follow_uid = 1024;

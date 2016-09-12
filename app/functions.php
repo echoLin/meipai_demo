@@ -10,8 +10,8 @@ function user($uid = false)
     	$uid = rand(1,2000);
 	}
 	//Redis::del('USER_INFO');
+	return response()->json('functions::user=1');
 	if (!$user = unserialize(Redis::hget('USER_INFO', $uid))) {
-		return response()->json('functions::user=1');
 		$user = User::find($uid);
 		Redis::hset('USER_INFO', $uid,  serialize($user));
 	}

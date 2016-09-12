@@ -17,10 +17,10 @@ class UserController extends Controller
         //return response()->json('user@index=1');
         $user = user($uid);
 
-        return response()->json('user@index=2');
+        //return response()->json('user@index=2');
         $uid = $user->id;
 
-        return response()->json('user@index=3');
+        return response()->json($user);
 
     	if (!$user['follows'] = Cache::get(USER_FOLLOWS_COUNT . $uid)) {
             if (!$user['follows'] = Redis::scard(USER_FOLLOWS_SET . $uid)) {

@@ -4,6 +4,7 @@ use App\User;
 
 function user($uid = false)
 {
+	return response()->json('functions::user=1');
 	if (!$uid) {
 		if ($user = Auth::user())
     		return $user;

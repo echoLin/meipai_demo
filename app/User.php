@@ -3,7 +3,7 @@
 namespace App;
 
 use DB;
-use Redis;
+use Illuminate\Support\Facades\Redis as Redis;
 use Cache;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 

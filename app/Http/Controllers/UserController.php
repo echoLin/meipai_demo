@@ -3,11 +3,10 @@
 namespace App\Http\Controllers;
 
 use Cache;
-use Illuminate\Support\Facades\Redis as Redis;
 use DB;
 use App\User;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Redis as Redis;
 use App\Http\Requests;
 
 class UserController extends Controller
@@ -16,7 +15,6 @@ class UserController extends Controller
     {
         $user = user($uid);
         $uid = $user->id;
-        return response()->json('User@Controller');
 
     	if (!$user['follows'] = Cache::get(USER_FOLLOWS_COUNT . $uid)) {
             if (!$user['follows'] = Redis::scard(USER_FOLLOWS_SET . $uid)) {

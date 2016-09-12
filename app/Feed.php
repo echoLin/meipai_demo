@@ -1,10 +1,10 @@
 <?php
 namespace App;
 
-use Redis;
 use Cache;
 use DB;
 use App\User;
+use Illuminate\Support\Facades\Redis as Redis;
 use Illuminate\Database\Eloquent\Model;
 
 

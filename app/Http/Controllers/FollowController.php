@@ -3,12 +3,11 @@
 namespace App\Http\Controllers;
 
 use Cache;
-use Redis;
 use DB;
 use Auth;
 use App\User;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Redis as Redis;
 use App\Http\Requests;
 
 class FollowController extends Controller

@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Redis as Redis;
 use App\User;
 
 function user($uid = false)

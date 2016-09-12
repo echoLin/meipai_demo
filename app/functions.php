@@ -4,7 +4,6 @@ use App\User;
 
 function user($uid = false)
 {
-	return response()->json('functions::user=1');
 	if (!$uid) {
 		if ($user = Auth::user())
     		return $user;
@@ -15,6 +14,7 @@ function user($uid = false)
 		$user = User::find($uid);
 		Redis::hset('USER_INFO', $uid,  serialize($user));
 	}
+	return response()->json('functions::user=1');
 	return $user;
 }
 

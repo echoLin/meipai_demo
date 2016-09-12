@@ -14,13 +14,8 @@ class UserController extends Controller
 {
     public function index($uid = false)
     {
-        //return response()->json('user@index=1');
         $user = user($uid);
-        return response()->json($user);
-        //return response()->json('user@index=2');
         $uid = $user->id;
-
-        return response()->json($user);
 
     	if (!$user['follows'] = Cache::get(USER_FOLLOWS_COUNT . $uid)) {
             if (!$user['follows'] = Redis::scard(USER_FOLLOWS_SET . $uid)) {

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Cache;
-use Redis;
+use Illuminate\Support\Facades\Redis as Redis;
 use DB;
 use App\User;
 use Illuminate\Http\Request;

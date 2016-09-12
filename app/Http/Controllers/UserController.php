@@ -14,6 +14,7 @@ class UserController extends Controller
 {
     public function index($uid = false)
     {
+        return response()->json('User@Controller');
         $user = user($uid);
         $uid = $user->id;
 

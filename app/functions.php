@@ -9,12 +9,12 @@ function user($uid = false)
     		return $user;
     	$uid = rand(1,2000);
 	}
+	return DB::connection('meipai')->table('users')->where('id', $uid)->first();
 	//Redis::del('USER_INFO');
-	//return response()->json('functions::user=1');
-	//if (!$user = unserialize(Redis::hget('USER_INFO', $uid))) {
+	if (!$user = unserialize(Redis::hget('USER_INFO', $uid))) {
 		$user = User::find($uid);
-		//Redis::hset('USER_INFO', $uid,  serialize($user));
-	//}
+		Redis::hset('USER_INFO', $uid,  serialize($user));
+	}
 	return $user;
 }
 

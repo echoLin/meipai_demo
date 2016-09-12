@@ -1,8 +1,5 @@
 <?php
 
-use Cache;
-use Redis;
-use DB;
 use App\User;
 
 function user($uid = false)

@@ -12,6 +12,7 @@ function user($uid = false)
     		return $user;
     	$uid = rand(1,2000);
 	}
+	return 'hahah';
 	$user = new User;
 	$user->id = 1023;
 	$user->name = 'hahah';

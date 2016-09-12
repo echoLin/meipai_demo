@@ -11,10 +11,10 @@ function user($uid = false)
 	}
 	//Redis::del('USER_INFO');
 	if (!$user = unserialize(Redis::hget('USER_INFO', $uid))) {
+		return response()->json('functions::user=1');
 		$user = User::find($uid);
 		Redis::hset('USER_INFO', $uid,  serialize($user));
 	}
-	return response()->json('functions::user=1');
 	return $user;
 }
 

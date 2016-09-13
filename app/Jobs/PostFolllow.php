@@ -33,22 +33,22 @@ class PostFollow extends Job implements ShouldQueue
      */
     public function handle()
     {
-         $follows_table = getFollowsTable($this->uid);
-         $follows_me_table = getFollowsMeTable($this->follow_uid);
+         // $follows_table = getFollowsTable($this->uid);
+         // $follows_me_table = getFollowsMeTable($this->follow_uid);
 
-         DB::beginTransaction();
-         try {
-            DB::connection('follows')->table($follows_table)->insert([
-                'uid' => $this->uid,
-                'follow_uid' => $this->follow_uid,
-                ]);
-            DB::connection('follows')->table($follows_me_table)->insert([
-                'uid' => $this->uid,
-                'follow_uid' => $this->follow_uid,
-                ]);
-            DB::commit();
-         } catch (Exception $e) {
-            DB::rollback();
-         }
+         // DB::beginTransaction();
+         // try {
+         //    DB::connection('follows')->table($follows_table)->insert([
+         //        'uid' => $this->uid,
+         //        'follow_uid' => $this->follow_uid,
+         //        ]);
+         //    DB::connection('follows')->table($follows_me_table)->insert([
+         //        'uid' => $this->uid,
+         //        'follow_uid' => $this->follow_uid,
+         //        ]);
+         //    DB::commit();
+         // } catch (Exception $e) {
+         //    DB::rollback();
+         // }
     }
 }

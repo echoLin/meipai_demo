@@ -40,19 +40,20 @@ class PublishFeed extends Job implements ShouldQueue
         $feeds_table = getFeedsTable();
         $feeds_index_table = getFeedsIndexTable($this->feed->uid);
         //Log::info('in queue');
+        $this->feed->setTable($feeds_table);
+        $this->feed->status = STATUS_CHECKED;
+        $feeds_index = new Feedsindex;
+        $feeds_index->setTable($feeds_index_table);
+        $feeds_index->uid = $this->feed->uid;
+        $feeds_index->feed_id = $this->feed->id;
+        $feeds_index->status = STATUS_CHECKED;
+
         DB::beginTransaction();
         try {
             //1.insert到feeds_xxxx
-            $this->feed->setTable($feeds_table);
-            $this->feed->status = STATUS_CHECKED;
             $this->feed->save();
 
             //2.insert到feeds_index_xxx
-            $feeds_index = new Feedsindex;
-            $feeds_index->setTable($feeds_index_table);
-            $feeds_index->uid = $this->feed->uid;
-            $feeds_index->feed_id = $this->feed->id;
-            $feeds_index->status = STATUS_CHECKED;
             $feeds_index->save();
 
             //3.udpate user表的最大和最小feed_id

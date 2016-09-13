@@ -70,6 +70,7 @@ class FeedController extends Controller
         $feed->id = $feed_id;
         $feed->uid = $uid;
         $feed->content = $content;
+        return response()->json($feed);
 
         $this->dispatch(new PublishFeed($feed, $user));
 

@@ -34,6 +34,10 @@ class FollowController extends Controller
             return response()->json('您已关注' . MAX_FOLLOWS_COUNT . '人，不可再关注他人');
          }
 
+         if (Redis::sismember(USER_FOLLOWS_SET . $uid, $follow_uid)) {
+            return response()->json('您已关注' . $follow_uid . '，不可再关注');
+         }
+
          $this->dispatch(new PostFollow($uid, $follow_uid));
 
          // $follows_table = getFollowsTable($uid);

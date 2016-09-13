@@ -11,6 +11,7 @@ use App\Jobs\PublishFeed;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis as Redis;
 use App\Http\Requests;
+use App\Http\Controllers\Controller;
 
 class FeedController extends Controller
 {

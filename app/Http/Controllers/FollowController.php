@@ -8,6 +8,7 @@ use Auth;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis as Redis;
+use App\Jobs\PostFollow;
 use App\Http\Requests;
 
 class FollowController extends Controller

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Cache;
 use DB;
+use Log;
 use App\User;
 use App\Feed;
 use App\Feedsindex;

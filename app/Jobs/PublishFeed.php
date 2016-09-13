@@ -37,7 +37,7 @@ class PublishFeed extends Job implements ShouldQueue
     {
         $feeds_table = getFeedsTable();
         $feeds_index_table = getFeedsIndexTable($this->feed->uid);
-
+        Log::info('in queue');
         DB::beginTransaction();
         try {
             //1.insert到feeds_xxxx

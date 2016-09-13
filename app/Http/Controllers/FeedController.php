@@ -64,17 +64,56 @@ class FeedController extends Controller
     	$user = user();
     	$uid = $user->id;
 
-        $feed = new Feed;
-        $feed->id = getFeedsId($user);
-        $feed->uid = $uid;
-        $feed->content = $content;
-        // Log::info('feed@add');
-        // return response()->json($feed);
-        // Log::info($feed->toArray());
+        // $feed = new Feed;
+        // $feed->id = getFeedsId($user);
+        // $feed->uid = $uid;
+        // $feed->content = $content;
+        // // Log::info('feed@add');
+        // // return response()->json($feed);
+        // // Log::info($feed->toArray());
 
         // $this->dispatch(new PublishFeed($feed, $user));
+        
 
-        // $this->incrFeedCache($user, $feed, 'feeds', 1);
+
+        $feeds_table = getFeedsTable();
+        $feeds_index_table = getFeedsIndexTable($uid);
+        $feed_id = getFeedsId($user);
+
+        DB::beginTransaction();
+        try {
+            //1.insert到feeds_xxxx
+            $feed = new Feed;
+            $feed->setTable($feeds_table);
+            $feed->id = $feed_id;
+            $feed->uid = $uid;
+            $feed->status = STATUS_CHECKED;
+            $feed->content = $content;
+            $feed->save();
+
+            //2.insert到feeds_index_xxx
+            $feeds_index = new Feedsindex;
+            $feeds_index->setTable($feeds_index_table);
+            $feeds_index->uid = $uid;
+            $feeds_index->feed_id = $feed_id;
+            $feeds_index->status = STATUS_CHECKED;
+            $feeds_index->save();
+
+            //3.udpate user表的最大和最小feed_id
+            if (intval(substr($feed_id, 14,5)) == 1) {
+                $user->min_feed_id = $feed_id;
+            } 
+            $user->max_feed_id = $feed_id;
+            $user->save();
+
+            //4.提交
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollback();
+            return response()->json($e);
+        }
+
+        $this->incrFeedCache($user, $feed, 'feeds', 1);
 
         return response()->json($feed);
     }
@@ -198,6 +237,9 @@ class FeedController extends Controller
     				Redis::hset(USER_FEEDS_MAX_ID, $uid, $feed_id);
     				Cache::increment(USER_FEEDS_COUNT . $uid);
     				Cache::increment(USER_FEEDS_REAL_COUNT . $uid);
+                    if ($user->getFollowsMeCount() >= FEED_CACHE_MIN_FOLLOWS_ME_COUNT) {//粉丝多的用户缓存动态内容
+                        Redis::hset(FEED_LIST, $this->feed->id, serialize($this->feed));
+                    }
     			} else {//删除动态
     			    $feed_id = $feed;
     			    Cache::decrement(USER_FEEDS_COUNT);

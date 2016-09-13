@@ -12,11 +12,11 @@ class Feed extends Model
 {
     protected $connection = 'feeds';
 
-    protected $table = '';
-
-    public function setTable($table)
-    {
-        $this->table = $table;
+    public function __call($method, $parameters){
+        if ($method == 'findOrFail') {
+            $this->setTable(getFeedsTable(substr($parameters[0], 0, 4)));
+        }
+        parent::__call($method, $parameters);
     }
 
     public function getFeedLikesCount() {

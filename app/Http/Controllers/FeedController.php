@@ -67,7 +67,7 @@ class FeedController extends Controller
         $feed->id = getFeedsId($user);
         $feed->uid = $uid;
         $feed->content = $content;
-
+        return response()->json($feed);
         Log::info('feed@add');
         return response()->json($feed);
         Log::info($feed->toArray());

@@ -70,6 +70,7 @@ class FeedController extends Controller
 
         Log::info('feed@add');
         Log::info($feed->toArray());
+        return response()->json($feed);
 
         $this->dispatch(new PublishFeed($feed, $user));
 

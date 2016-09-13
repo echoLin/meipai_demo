@@ -112,6 +112,7 @@ class FeedController extends Controller
             DB::rollback();
             return response()->json($e);
         }
+        $feed->id = $feed_id;
 
         $this->incrFeedCache($user, $feed, 'feeds', 1);
 

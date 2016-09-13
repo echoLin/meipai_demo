@@ -68,10 +68,6 @@ class FeedController extends Controller
         $feed->id = getFeedsId($user);
         $feed->uid = $uid;
         $feed->content = $content;
-        // Log::info('feed@add');
-        // return response()->json($feed);
-        // Log::info($feed->toArray());
-
         $this->dispatch(new PublishFeed($feed, $user));
         return response()->json($feed);
         

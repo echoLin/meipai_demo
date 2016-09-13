@@ -12,12 +12,12 @@ class Feed extends Model
 {
     protected $connection = 'feeds';
 
-    // public function __call($method, $parameters){
-    //     if ($method == 'findOrFail') {
-    //         $this->setTable(getFeedsTable(substr($parameters[0], 0, 4)));
-    //     }
-    //     parent::__call($method, $parameters);
-    // }
+    public function __call($method, $parameters){
+        if ($method == 'findOrFail') {
+            $this->setTable(getFeedsTable(substr($parameters[0], 0, 4)));
+        }
+        parent::__call($method, $parameters);
+    }
 
     public function getFeedLikesCount() {
     	if (!$count = Redis::hget(FEED_LIKES_COUNT, $this->id)) {

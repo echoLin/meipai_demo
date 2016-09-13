@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use Cache;
 use DB;
-use Log;
 use App\User;
 use App\Feed;
 use App\Feedsindex;
+use App\Jobs\PublishFeed;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis as Redis;
 use App\Http\Requests;
@@ -67,7 +67,6 @@ class FeedController extends Controller
         $feed->id = getFeedsId($user);
         $feed->uid = $uid;
         $feed->content = $content;
-        return response()->json($feed);
         Log::info('feed@add');
         return response()->json($feed);
         Log::info($feed->toArray());

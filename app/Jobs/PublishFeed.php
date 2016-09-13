@@ -6,6 +6,7 @@ use DB;
 use Log;
 use App\User;
 use App\Feed;
+use App\Feedsindex;
 use App\Jobs\Job;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;

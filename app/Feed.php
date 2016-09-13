@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 class Feed extends Model
 {
     protected $connection = 'feeds';
+    protected $table = 'feeds_1609';
 
     public function __call($method, $parameters){
         if ($method == 'findOrFail') {

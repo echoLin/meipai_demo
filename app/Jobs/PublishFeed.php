@@ -3,11 +3,13 @@
 namespace App\Jobs;
 
 use DB;
+use App\User;
 use App\Feed;
 use App\Jobs\Job;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Redis as Redis;
 
 class PublishFeed extends Job implements ShouldQueue
 {
@@ -20,7 +22,7 @@ class PublishFeed extends Job implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(Feed $feed, $user)
+    public function __construct(Feed $feed, User $user)
     {
         $this->feed = $feed;
         $this->user = $user;
@@ -62,6 +64,10 @@ class PublishFeed extends Job implements ShouldQueue
             DB::commit();
         } catch (Exception $e) {
             DB::rollback();
+            return false;
+        }
+        if ($this->user->getFollowsMeCount() >= FEED_CACHE_MIN_FOLLOWS_ME_COUNT) {//粉丝多的用户缓存动态内容
+            Redis::hset(FEED_LIST, $this->feed->id, serialize($this->feed));
         }
     }
 }

@@ -70,7 +70,7 @@ class FeedController extends Controller
         $feed->id = $feed_id;
         $feed->uid = $uid;
         $feed->content = $content;
-        return response()->json($feed);
+        //return response()->json($feed);
 
         $this->dispatch(new PublishFeed($feed, $user));
 
@@ -232,9 +232,6 @@ class FeedController extends Controller
     				Redis::hset(USER_FEEDS_MAX_ID, $uid, $feed_id);
     				Cache::increment(USER_FEEDS_COUNT . $uid);
     				Cache::increment(USER_FEEDS_REAL_COUNT . $uid);
-    				if ($user->getFollowsMeCount() >= FEED_CACHE_MIN_FOLLOWS_ME_COUNT) {//粉丝多的用户缓存动态内容
-			        	Redis::hset(FEED_LIST, $feed_id, serialize($feed));
-			        }
     			} else {//删除动态
     			    $feed_id = $feed;
     			    Cache::decrement(USER_FEEDS_COUNT);

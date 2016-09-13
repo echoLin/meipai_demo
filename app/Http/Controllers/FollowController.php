@@ -33,26 +33,26 @@ class FollowController extends Controller
             return response()->json('您已关注' . MAX_FOLLOWS_COUNT . '人，不可再关注他人');
          }
 
-         $this->dispatch(new PostFollow($uid, $follow_uid));
+         //$this->dispatch(new PostFollow($uid, $follow_uid));
 
-         // $follows_table = getFollowsTable($uid);
-         // $follows_me_table = getFollowsMeTable($follow_uid);
+         $follows_table = getFollowsTable($uid);
+         $follows_me_table = getFollowsMeTable($follow_uid);
 
-         // DB::beginTransaction();
-         // try {
-         // 	DB::connection('follows')->table($follows_table)->insert([
-         // 		'uid' => $uid,
-         // 		'follow_uid' => $follow_uid,
-         // 		]);
-         // 	DB::connection('follows')->table($follows_me_table)->insert([
-         // 		'uid' => $uid,
-         // 		'follow_uid' => $follow_uid,
-         // 		]);
-         //    DB::commit();
-         // } catch (Exception $e) {
-         // 	DB::rollback();
-         // 	return response()->json($e);
-         // }
+         DB::beginTransaction();
+         try {
+         	DB::connection('follows')->table($follows_table)->insert([
+         		'uid' => $uid,
+         		'follow_uid' => $follow_uid,
+         		]);
+         	DB::connection('follows')->table($follows_me_table)->insert([
+         		'uid' => $uid,
+         		'follow_uid' => $follow_uid,
+         		]);
+            DB::commit();
+         } catch (Exception $e) {
+         	DB::rollback();
+         	return response()->json($e);
+         }
 
          Cache::increment(USER_FOLLOWS_COUNT . $uid);
          Cache::increment(USER_FOLLOWS_ME_COUNT . $follow_uid);

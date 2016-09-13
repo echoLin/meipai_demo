@@ -55,7 +55,37 @@
 
 
 
-### 2. Test Data
+### 2. Test
+
+#### Development
+
+##### 1. wrk
+
+	(1) -get /user
+
+	Running 30s test @ http://192.168.41.214/user
+  	4 threads and 100 connections
+  	Thread Stats   Avg      Stdev       Max    +/- Stdev
+    Latency       1.80s    134.93ms    2.00s    91.06%
+    Req/Sec      22.69      19.24    121.00     77.11%
+  	1591 requests in 30.04s, 1.25MB read
+  	Socket errors: connect 0, read 0, write 0, timeout 125
+	Requests/sec:     52.95
+	Transfer/sec:     42.55KB
+	
+	(2) -post /follow/{uid}
+	
+	(3) -delete /follow/{uid}
+	
+	(2) -get /feed
+	
+	(3) -post /feed
+	
+	(4) -delete /feed/{feed_id}
+
+
+#### Data
+
 
 
 

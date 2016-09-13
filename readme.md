@@ -15,6 +15,38 @@
     php artisan migrate
 
     php db:seed
+   
+   
+   
+## API
+---
+	1.用户基本信息（姓名、邮箱、美拍数、关注数、粉丝数）
+	-get /user/{uid?}
+	
+	2.关注用户
+	-post /follow/{follow_uid}
+	
+	3.取关用户
+	-delete /follow/{follow_uid}
+	
+	4.拉取动态列表
+	-get /feed/{max?}/{min?}
+	
+	5.获取动态内容
+	-get /feed/{feed_id}
+	
+	6.发布动态
+	-post /feed
+	params:content(内容)
+	
+	7.删除动态
+	-delete /feed/{feed_id}
+	
+	8.点赞动态
+	-post /like/{feed_id}
+	
+	9.取赞动态
+	-delete /like/{feed_id}
     
     
 ## Design

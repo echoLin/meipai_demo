@@ -59,26 +59,43 @@
 
 ##### 1. wrk
 
-	(1) -get /user
+	1.用户基本信息（姓名、邮箱、美拍数、关注数、粉丝数）
+	-get /user/{uid?}
+	
+		Running 30s test @ http://192.168.41.214/user/1024
+  		2 threads and 50 connections
+  		Thread Stats   Avg        Stdev       Max         +/- Stdev
+    	Latency        411.06ms   50.50ms     922.71ms     89.78%
+    	Req/Sec        62.20      32.04       210.00       60.84%
+  		3630 requests in 30.02s, 2.85MB read
+		Requests/sec:    120.91
+		Transfer/sec:     97.18KB
 
-	Running 30s test @ http://192.168.41.214/user/1024
-  	2 threads and 50 connections
-  	Thread Stats   Avg        Stdev       Max         +/- Stdev
-    Latency        411.06ms   50.50ms     922.71ms     89.78%
-    Req/Sec        62.20      32.04       210.00       60.84%
-  	3630 requests in 30.02s, 2.85MB read
-	Requests/sec:    120.91
-	Transfer/sec:     97.18KB
 	
-	(2) -post /follow/{uid}
+	2.关注用户
+	-post /follow/{follow_uid}
 	
-	(3) -delete /follow/{uid}
+	3.取关用户
+	-delete /follow/{follow_uid}
 	
-	(2) -get /feed
+	4.拉取动态列表
+	-get /feed/{max?}/{min?}
 	
-	(3) -post /feed
+	5.获取动态内容
+	-get /feed/{feed_id}
 	
-	(4) -delete /feed/{feed_id}
+	6.发布动态
+	-post /feed
+	-data {'content':'happy day~"}
+	
+	7.删除动态
+	-delete /feed/{feed_id}
+	
+	8.点赞动态
+	-post /like/{feed_id}
+	
+	9.取赞动态
+	-delete /like/{feed_id}
 
 
 #### Data

@@ -16,14 +16,6 @@ class UserController extends Controller
         $user = user($uid);
         $uid = $user->id;
 
-        if (!$user = unserialize(Redis::hget('USER_INFO', $uid))) {
-            $user = User::find($uid);
-            Redis::hset('USER_INFO', $uid,  serialize($user));
-        }
-
-        return response()->json(unserialize(Redis::hget('USER_INFO', $uid)));
-
-
         //return response()->json($user);
 
     	if (!$user['follows'] = Cache::get(USER_FOLLOWS_COUNT . $uid)) {

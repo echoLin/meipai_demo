@@ -80,7 +80,7 @@ class FeedController extends Controller
     public function delete ($feed_id)
     {
     	$uid = intval(substr($feed_id, 4,10));
-    	// $user = user($uid);//*
+    	$user = user($uid);//*
     	// if ($uid != $user->id) {
     	// 	return response()->json($feed_id . ' is not your feed');
     	// }

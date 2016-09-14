@@ -80,10 +80,10 @@ class FeedController extends Controller
     public function delete ($feed_id)
     {
     	$uid = intval(substr($feed_id, 4,10));
-    	$user = user($uid);//*
-    	if ($uid != $user->id) {
-    		return response()->json($feed_id . ' is not your feed');
-    	}
+    	// $user = user($uid);//*
+    	// if ($uid != $user->id) {
+    	// 	return response()->json($feed_id . ' is not your feed');
+    	// }
 
      //    $ym = substr($feed_id, 0, 4);
     	// $feeds_table = getFeedsTable($ym);
@@ -104,7 +104,7 @@ class FeedController extends Controller
      //    }
 
         $this->incrFeedCache($user, $feed_id, 'feeds', -1);
-        $this->dispatch(new DeleteFeed($uid, $feed_id));
+        //$this->dispatch(new DeleteFeed($uid, $feed_id));
 
         return response()->json('delete ' . $feed_id . ' success');
     }

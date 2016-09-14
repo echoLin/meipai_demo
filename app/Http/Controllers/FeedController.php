@@ -20,7 +20,7 @@ class FeedController extends Controller
 {
     public function index ($max = 0, $min = 0)
     {	
-	    $user = user();
+	    $user = user(1024);
 	    $uid = $user->id;
 
 	    //1.获取用户的关注列表
@@ -64,8 +64,8 @@ class FeedController extends Controller
     {
     	$content = $request->input('content');
 
-    	$user = user();
-    	$uid = $user->id;
+        $user = user();
+        $uid = $user->id;
 
         $feed = new Feed;
         $feed->id = getFeedsId($user);

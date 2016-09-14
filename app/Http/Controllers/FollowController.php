@@ -70,7 +70,7 @@ class FollowController extends Controller
 
     public function delete($follow_uid)
     {
-    	$user = user();
+    	$user = user(1024);
         $uid = $user->id;
 
         if (!Redis::sismember(USER_FOLLOWS_SET . $uid, $follow_uid)) {

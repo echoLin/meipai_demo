@@ -54,12 +54,12 @@ class FollowController extends Controller
     	$user = user(1024);
         $uid = $user->id;
 
-        // if (!Redis::sismember(USER_FOLLOWS_SET . $uid, $follow_uid)) {
-        //     $follows_table = getFollowsTable($uid);
-        //     if (!DB::connection('follows')->table($follows_table)->where('uid', $uid)->where('follow_uid', $follow_uid)->count()) {
-        //         return response()->json($uid . ' did not follow ' . $follow_uid);
-        //     }
-        // }
+        if (!Redis::sismember(USER_FOLLOWS_SET . $uid, $follow_uid)) {
+            $follows_table = getFollowsTable($uid);
+            if (!DB::connection('follows')->table($follows_table)->where('uid', $uid)->where('follow_uid', $follow_uid)->count()) {
+                return response()->json($uid . ' did not follow ' . $follow_uid);
+            }
+        }
 
         Cache::decrement(USER_FOLLOWS_COUNT . $uid);
         Cache::decrement(USER_FOLLOWS_ME_COUNT . $follow_uid);

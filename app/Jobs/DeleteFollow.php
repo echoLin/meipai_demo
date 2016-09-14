@@ -7,6 +7,7 @@ use App\Jobs\Job;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Redis as Redis;
 
 class DeleteFollow extends Job implements ShouldQueue
 {

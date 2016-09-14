@@ -8,13 +8,13 @@ use App\User;
 use App\Feed;
 use App\Feedsindex;
 use App\Jobs\PublishFeed;
+use App\Jobs\DeleteFeed;
+use App\Jobs\PostLike;
+use App\Jobs\DeleteLike;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis as Redis;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use App\Jobs\DeleteFeed;
-use App\Jobs\PostLike;
-use App\Jobs\DeleteLike;
 
 class FeedController extends Controller
 {

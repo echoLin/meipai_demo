@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use DB;
-use Log;
 use App\User;
 use App\Feed;
 use App\Feedsindex;

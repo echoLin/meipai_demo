@@ -39,25 +39,6 @@ class FollowController extends Controller
             return response()->json('您已关注' . $follow_uid . '，不可再关注');
          }
 
-         // $follows_table = getFollowsTable($uid);
-         // $follows_me_table = getFollowsMeTable($follow_uid);
-
-         // DB::beginTransaction();
-         // try {
-         // 	DB::connection('follows')->table($follows_table)->insert([
-         // 		'uid' => $uid,
-         // 		'follow_uid' => $follow_uid,
-         // 		]);
-         // 	DB::connection('follows')->table($follows_me_table)->insert([
-         // 		'uid' => $uid,
-         // 		'follow_uid' => $follow_uid,
-         // 		]);
-         //    DB::commit();
-         // } catch (Exception $e) {
-         // 	DB::rollback();
-         // 	return response()->json($e);
-         // }
-
          Cache::increment(USER_FOLLOWS_COUNT . $uid);
          Cache::increment(USER_FOLLOWS_ME_COUNT . $follow_uid);
          Redis::sadd(USER_FOLLOWS_SET . $uid, $follow_uid);

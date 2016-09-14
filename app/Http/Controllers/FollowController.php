@@ -9,6 +9,7 @@ use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis as Redis;
 use App\Jobs\PostFollow;
+use App\Jobs\DeleteFollow;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -38,8 +39,6 @@ class FollowController extends Controller
             return response()->json('您已关注' . $follow_uid . '，不可再关注');
          }
 
-         $this->dispatch(new PostFollow($uid, $follow_uid));
-
          // $follows_table = getFollowsTable($uid);
          // $follows_me_table = getFollowsMeTable($follow_uid);
 
@@ -64,6 +63,7 @@ class FollowController extends Controller
          Redis::sadd(USER_FOLLOWS_SET . $uid, $follow_uid);
          Redis::sadd(USER_FOLLOWS_ME_SET . $follow_uid, $uid);
 
+         $this->dispatch(new PostFollow($uid, $follow_uid));
          return response()->json($uid . ' follow ' . $follow_uid . ' success');
 
     }
@@ -73,23 +73,10 @@ class FollowController extends Controller
     	$user = user();
         $uid = $user->id;
 
-        $follows_table = getFollowsTable($uid);
-        $follows_me_table = getFollowsMeTable($follow_uid);
-
         if (!Redis::sismember(USER_FOLLOWS_SET . $uid, $follow_uid)) {
             if (!DB::connection('follows')->table($follows_table)->where('uid', $uid)->where('follow_uid', $follow_uid)->count()) {
                 return response()->json($uid . ' did not follow ' . $follow_uid);
             }
-        }
-
-        DB::beginTransaction();
-         try {
-         	DB::connection('follows')->table($follows_table)->where('uid', $uid)->where('follow_uid', $follow_uid)->delete();
-         	DB::connection('follows')->table($follows_me_table)->where('uid', $uid)->where('follow_uid', $follow_uid)->delete();
-            DB::commit();
-        } catch (Exception $e) {
-         	DB::rollback();
-         	return response()->json($e);
         }
 
         Cache::decrement(USER_FOLLOWS_COUNT . $uid);
@@ -97,7 +84,9 @@ class FollowController extends Controller
         Redis::srem(USER_FOLLOWS_SET . $uid, $follow_uid);
         Redis::srem(USER_FOLLOWS_ME_SET . $follow_uid, $uid);
 
-         return response()->json($uid . ' unfollow ' . $follow_uid . ' success');
+        $this->dispatch(new PostFollow($uid, $follow_uid));
+
+        return response()->json($uid . ' unfollow ' . $follow_uid . ' success');
 
     }
 

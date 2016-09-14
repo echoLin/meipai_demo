@@ -12,6 +12,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis as Redis;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use App\Jobs\DeleteFeed;
+use App\Jobs\PostLike;
+use App\Jobs\DeleteLike;
 
 class FeedController extends Controller
 {
@@ -119,30 +122,31 @@ class FeedController extends Controller
     public function delete ($feed_id)
     {
     	$uid = intval(substr($feed_id, 4,10));
-    	$ym = substr($feed_id, 0, 4);
     	$user = user($uid);//*
     	if ($uid != $user->id) {
     		return response()->json($feed_id . ' is not your feed');
     	}
 
-    	$feeds_table = getFeedsTable($ym);
-        $feeds_index_table = getFeedsIndexTable($uid);
+     //    $ym = substr($feed_id, 0, 4);
+    	// $feeds_table = getFeedsTable($ym);
+     //    $feeds_index_table = getFeedsIndexTable($uid);
 
-        DB::beginTransaction();
-        try {
-        	DB::connection('feeds')->table($feeds_index_table)->where('uid', $uid)->where('feed_id', $feed_id)->update([
-        		'status' => STATUS_DELETED
-        		]);
-        	DB::connection('feeds')->table($feeds_table)->where('uid', $uid)->where('id', $feed_id)->update([
-        		'status' => STATUS_DELETED
-        		]);
-        	DB::commit();
-        } catch (Exception $e) {
-        	DB::rollback();
-        	return response()->json($e);
-        }
+     //    DB::beginTransaction();
+     //    try {
+     //    	DB::connection('feeds')->table($feeds_index_table)->where('uid', $uid)->where('feed_id', $feed_id)->update([
+     //    		'status' => STATUS_DELETED
+     //    		]);
+     //    	DB::connection('feeds')->table($feeds_table)->where('uid', $uid)->where('id', $feed_id)->update([
+     //    		'status' => STATUS_DELETED
+     //    		]);
+     //    	DB::commit();
+     //    } catch (Exception $e) {
+     //    	DB::rollback();
+     //    	return response()->json($e);
+     //    }
 
         $this->incrFeedCache($user, $feed_id, 'feeds', -1);
+        $this->dispatch(new DeleteFeed($uid, $feed_id));
 
         return response()->json('delete ' . $feed_id . ' success');
     }
@@ -154,27 +158,27 @@ class FeedController extends Controller
         if (!Redis::sismember(FEED_LIKES_SET . $feed_id, $uid)) {
             return response()->json($uid . 'likes ' . $feed_id . ' already');
         }
-        $likes_table = getLikesTable($uid);
-        $likes_feed_table = getLikesFeedTable($feed_id);
+        // $likes_table = getLikesTable($uid);
+        // $likes_feed_table = getLikesFeedTable($feed_id);
 
-        DB::beginTransaction();
-        try {
-            DB::connection('likes')->table($likes_table)->insert([
-                'uid' => $uid,
-                'feed_id' => $feed_id,
-                ]);
-            DB::connection('likes')->table($likes_feed_table)->insert([
-                'uid' => $uid,
-                'feed_id' => $feed_id,
-                ]);
-            DB::commit();
-        } catch (Exception $e) {
-            DB::rollback();
-            return response()->json($e);
-        }
+        // DB::beginTransaction();
+        // try {
+        //     DB::connection('likes')->table($likes_table)->insert([
+        //         'uid' => $uid,
+        //         'feed_id' => $feed_id,
+        //         ]);
+        //     DB::connection('likes')->table($likes_feed_table)->insert([
+        //         'uid' => $uid,
+        //         'feed_id' => $feed_id,
+        //         ]);
+        //     DB::commit();
+        // } catch (Exception $e) {
+        //     DB::rollback();
+        //     return response()->json($e);
+        // }
         
         $this->incrFeedCache($user, $feed_id, 'likes', 1);
-
+        $this->dispatch(new PostLike($uid, $feed_id));
         return response()->json($uid . ' likes ' . $feed_id .' success');
     }
 
@@ -186,20 +190,21 @@ class FeedController extends Controller
             return response()->json($uid . 'already likes ' . $feed_id);
         }
 
-        $likes_table = getLikesTable($uid);
-        $likes_feed_table = getLikesFeedTable($feed_id);
+        // $likes_table = getLikesTable($uid);
+        // $likes_feed_table = getLikesFeedTable($feed_id);
 
-        DB::beginTransaction();
-        try {
-            DB::connection('likes')->table($likes_table)->where('uid', $uid)->where('feed_id', $feed_id)->delete();
-            DB::connection('likes')->table($likes_feed_table)->where('uid', $uid)->where('feed_id', $feed_id)->delete();
-            DB::commit();
-        } catch (Exception $e) {
-            DB::rollback();
-            return response()->json($e);
-        }
+        // DB::beginTransaction();
+        // try {
+        //     DB::connection('likes')->table($likes_table)->where('uid', $uid)->where('feed_id', $feed_id)->delete();
+        //     DB::connection('likes')->table($likes_feed_table)->where('uid', $uid)->where('feed_id', $feed_id)->delete();
+        //     DB::commit();
+        // } catch (Exception $e) {
+        //     DB::rollback();
+        //     return response()->json($e);
+        // }
 
         $this->incrFeedCache($user, $feed_id, 'likes', -1);
+        $this->dispatch(new DeleteLike($uid, $feed_id));
 
         return response()->json($uid . ' unlikes ' . $feed_id .' success');
 

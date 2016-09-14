@@ -9,7 +9,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Redis as Redis;
 
-class PostFollow extends Job implements ShouldQueue
+class DeleteFollow extends Job implements ShouldQueue
 {
     use InteractsWithQueue, SerializesModels;
 
@@ -33,22 +33,17 @@ class PostFollow extends Job implements ShouldQueue
      */
     public function handle()
     {
-         $follows_table = getFollowsTable($this->uid);
-         $follows_me_table = getFollowsMeTable($this->follow_uid);
+        $follows_table = getFollowsTable($this->uid);
+        $follows_me_table = getFollowsMeTable($this->follow_uid);
 
-         DB::beginTransaction();
+        DB::beginTransaction();
          try {
-            DB::connection('follows')->table($follows_table)->insert([
-                'uid' => $this->uid,
-                'follow_uid' => $this->follow_uid,
-                ]);
-            DB::connection('follows')->table($follows_me_table)->insert([
-                'uid' => $this->uid,
-                'follow_uid' => $this->follow_uid,
-                ]);
+            DB::connection('follows')->table($follows_table)->where('uid', $this->uid)->where('follow_uid', $this->follow_uid)->delete();
+            DB::connection('follows')->table($follows_me_table)->where('uid', $this->uid)->where('follow_uid', $this->follow_uid)->delete();
             DB::commit();
-         } catch (Exception $e) {
+        } catch (Exception $e) {
             DB::rollback();
-         }
+        }
+
     }
 }

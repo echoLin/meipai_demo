@@ -9,21 +9,21 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Redis as Redis;
 
-class PostFollow extends Job implements ShouldQueue
+class PostLike extends Job implements ShouldQueue
 {
     use InteractsWithQueue, SerializesModels;
 
     protected $uid;
-    protected $follow_uid;
+    protected $feed_id;
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($uid, $follow_uid)
+    public function __construct($uid, $feed_id)
     {
         $this->uid = $uid;
-        $this->follow_uid = $follow_uid;
+        $this->feed_id = $feed_id;
     }
 
     /**
@@ -33,22 +33,22 @@ class PostFollow extends Job implements ShouldQueue
      */
     public function handle()
     {
-         $follows_table = getFollowsTable($this->uid);
-         $follows_me_table = getFollowsMeTable($this->follow_uid);
+        $likes_table = getLikesTable($this->uid);
+        $likes_feed_table = getLikesFeedTable($this->feed_id);
 
-         DB::beginTransaction();
-         try {
-            DB::connection('follows')->table($follows_table)->insert([
+        DB::beginTransaction();
+        try {
+            DB::connection('likes')->table($likes_table)->insert([
                 'uid' => $this->uid,
-                'follow_uid' => $this->follow_uid,
+                'feed_id' => $this->feed_id,
                 ]);
-            DB::connection('follows')->table($follows_me_table)->insert([
+            DB::connection('likes')->table($likes_feed_table)->insert([
                 'uid' => $this->uid,
-                'follow_uid' => $this->follow_uid,
+                'feed_id' => $this->feed_id,
                 ]);
             DB::commit();
-         } catch (Exception $e) {
+        } catch (Exception $e) {
             DB::rollback();
-         }
+        }
     }
 }

@@ -56,20 +56,26 @@
 ### Test
 
 #### Development
+	laravel 5.2
+	PHP 7.0.10
+	memcached 1.4.4
+	redis 2.4.10
+	nginx nginx/meitu1210
+	mysql Ver 14.14 Distrib 5.1.73, for redhat-linux-gnu (x86_64) using readline 5.1
 
-##### 1. wrk
+##### use wrk
 
 	1.用户基本信息（姓名、邮箱、美拍数、关注数、粉丝数）
 	-get /user/{uid?}
 	
-		Running 30s test @ http://192.168.41.214/user/1024
-  		2 threads and 50 connections
-  		Thread Stats   Avg        Stdev       Max         +/- Stdev
-    	Latency        411.06ms   50.50ms     922.71ms     89.78%
-    	Req/Sec        62.20      32.04       210.00       60.84%
-  		3630 requests in 30.02s, 2.85MB read
-		Requests/sec:    120.91
-		Transfer/sec:     97.18KB
+	Running 30s test @ http://192.168.41.214/user/1024
+  	2 threads and 50 connections
+  	Thread Stats    Avg        Stdev     Max        +/- Stdev
+    Latency         179.90ms   38.12ms   537.26ms   84.02%
+    Req/Sec         140.21     40.77     252.00     76.64%
+  	8344 requests in 30.05s, 6.58MB read
+	Requests/sec:    277.67
+	Transfer/sec:    224.25KB
 
 	
 	2.关注用户
@@ -87,6 +93,16 @@
 	6.发布动态
 	-post /feed
 	-data {'content':'happy day~"}
+	
+	Running 30s test @ http://192.168.41.214/feed
+  	2 threads and 50 connections
+  	Thread Stats   Avg        Stdev     Max        +/- Stdev
+    Latency        211.73ms   37.61ms   517.61ms   69.50%
+    Req/Sec        118.32     26.24     191.00     65.83%
+  7055 requests in 30.01s, 1.43MB read
+  Non-2xx or 3xx responses: 7055
+Requests/sec:    235.06
+Transfer/sec:     48.89KB
 	
 	7.删除动态
 	-delete /feed/{feed_id}

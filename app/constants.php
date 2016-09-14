@@ -25,7 +25,7 @@ define('USER_FEEDS_MIN_ID', '1:4:3');
 //动态相关
 //1.缓存
 define('FEED_CACHE_MIN_FOLLOWS_ME_COUNT', 200);//粉丝数大于该数的用户在发布动态是缓存动态内容
-define('FEED_CACHE_LIKES_COUNT', 100);//点赞数大于该数的动态需缓存内容
+define('FEED_CACHE_MIN_LIKES_COUNT', 100);//点赞数大于该数的动态需缓存内容
 define('FEED_LIKES_COUNT', '2:1:1');
 define('FEED_LIKES_SET', '2:1:2');
 define('FEED_LIST', '2:2');

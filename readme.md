@@ -51,11 +51,9 @@
     
 ## Design
 ---
-### 1. Flow Diagram
 
 
-
-### 2. Test
+### Test
 
 #### Development
 
@@ -89,7 +87,7 @@
 
 
 
-### 3. Database
+### Database
 #### meipai
 - User
 

@@ -135,7 +135,7 @@ class FeedController extends Controller
         //     return response()->json($e);
         // }
         
-        //$this->incrFeedCache($user, $feed_id, 'likes', 1);
+        $this->incrFeedCache($user, $feed_id, 'likes', 1);
         $this->dispatch(new PostLike($uid, $feed_id));
         return response()->json($uid . ' likes ' . $feed_id .' success');
     }

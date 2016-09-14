@@ -85,26 +85,26 @@ class FeedController extends Controller
     		return response()->json($feed_id . ' is not your feed');
     	}
 
-        $ym = substr($feed_id, 0, 4);
-    	$feeds_table = getFeedsTable($ym);
-        $feeds_index_table = getFeedsIndexTable($uid);
+     //    $ym = substr($feed_id, 0, 4);
+    	// $feeds_table = getFeedsTable($ym);
+     //    $feeds_index_table = getFeedsIndexTable($uid);
 
-        DB::beginTransaction();
-        try {
-        	DB::connection('feeds')->table($feeds_index_table)->where('uid', $uid)->where('feed_id', $feed_id)->update([
-        		'status' => STATUS_DELETED
-        		]);
-        	DB::connection('feeds')->table($feeds_table)->where('uid', $uid)->where('id', $feed_id)->update([
-        		'status' => STATUS_DELETED
-        		]);
-        	DB::commit();
-        } catch (Exception $e) {
-        	DB::rollback();
-        	return response()->json($e);
-        }
+     //    DB::beginTransaction();
+     //    try {
+     //    	DB::connection('feeds')->table($feeds_index_table)->where('uid', $uid)->where('feed_id', $feed_id)->update([
+     //    		'status' => STATUS_DELETED
+     //    		]);
+     //    	DB::connection('feeds')->table($feeds_table)->where('uid', $uid)->where('id', $feed_id)->update([
+     //    		'status' => STATUS_DELETED
+     //    		]);
+     //    	DB::commit();
+     //    } catch (Exception $e) {
+     //    	DB::rollback();
+     //    	return response()->json($e);
+     //    }
 
         $this->incrFeedCache($user, $feed_id, 'feeds', -1);
-        //$this->dispatch(new DeleteFeed($uid, $feed_id));
+        $this->dispatch(new DeleteFeed($uid, $feed_id));
 
         return response()->json('delete ' . $feed_id . ' success');
     }
@@ -116,27 +116,27 @@ class FeedController extends Controller
         if (Redis::sismember(FEED_LIKES_SET . $feed_id, $uid)) {
             return response()->json($uid . ' likes ' . $feed_id . ' already');
         }
-        $likes_table = getLikesTable($uid);
-        $likes_feed_table = getLikesFeedTable($feed_id);
+        // $likes_table = getLikesTable($uid);
+        // $likes_feed_table = getLikesFeedTable($feed_id);
 
-        DB::beginTransaction();
-        try {
-            DB::connection('likes')->table($likes_table)->insert([
-                'uid' => $uid,
-                'feed_id' => $feed_id,
-                ]);
-            DB::connection('likes')->table($likes_feed_table)->insert([
-                'uid' => $uid,
-                'feed_id' => $feed_id,
-                ]);
-            DB::commit();
-        } catch (Exception $e) {
-            DB::rollback();
-            return response()->json($e);
-        }
+        // DB::beginTransaction();
+        // try {
+        //     DB::connection('likes')->table($likes_table)->insert([
+        //         'uid' => $uid,
+        //         'feed_id' => $feed_id,
+        //         ]);
+        //     DB::connection('likes')->table($likes_feed_table)->insert([
+        //         'uid' => $uid,
+        //         'feed_id' => $feed_id,
+        //         ]);
+        //     DB::commit();
+        // } catch (Exception $e) {
+        //     DB::rollback();
+        //     return response()->json($e);
+        // }
         
         $this->incrFeedCache($user, $feed_id, 'likes', 1);
-        //$this->dispatch(new PostLike($uid, $feed_id));
+        $this->dispatch(new PostLike($uid, $feed_id));
         return response()->json($uid . ' likes ' . $feed_id .' success');
     }
 
@@ -148,21 +148,21 @@ class FeedController extends Controller
             return response()->json($uid . ' did not likes ' . $feed_id);
         }
 
-        $likes_table = getLikesTable($uid);
-        $likes_feed_table = getLikesFeedTable($feed_id);
+        // $likes_table = getLikesTable($uid);
+        // $likes_feed_table = getLikesFeedTable($feed_id);
 
-        DB::beginTransaction();
-        try {
-            DB::connection('likes')->table($likes_table)->where('uid', $uid)->where('feed_id', $feed_id)->delete();
-            DB::connection('likes')->table($likes_feed_table)->where('uid', $uid)->where('feed_id', $feed_id)->delete();
-            DB::commit();
-        } catch (Exception $e) {
-            DB::rollback();
-            return response()->json($e);
-        }
+        // DB::beginTransaction();
+        // try {
+        //     DB::connection('likes')->table($likes_table)->where('uid', $uid)->where('feed_id', $feed_id)->delete();
+        //     DB::connection('likes')->table($likes_feed_table)->where('uid', $uid)->where('feed_id', $feed_id)->delete();
+        //     DB::commit();
+        // } catch (Exception $e) {
+        //     DB::rollback();
+        //     return response()->json($e);
+        // }
 
         $this->incrFeedCache($user, $feed_id, 'likes', -1);
-        //$this->dispatch(new DeleteLike($uid, $feed_id));
+        $this->dispatch(new DeleteLike($uid, $feed_id));
 
         return response()->json($uid . ' unlikes ' . $feed_id .' success');
 
@@ -180,7 +180,7 @@ class FeedController extends Controller
     			Redis::hincrby(FEED_LIKES_COUNT, $feed_id, $increment);
 		        if ($increment == 1) {//点赞
 		        	Redis::sadd(FEED_LIKES_SET . $feed_id, $uid);
-		        	if (Redis::hget(FEED_LIKES_COUNT, $feed_id) >= FFED_CACHE_MIN_LIKES_COUNT) {
+		        	if (Redis::hget(FEED_LIKES_COUNT, $feed_id) >= FEED_CACHE_MIN_LIKES_COUNT) {
 			        	Redis::hsetnx(FEED_LIST, $feed_id, serialize($feed));
 			        }
 		        } else {//取消赞
@@ -206,7 +206,7 @@ class FeedController extends Controller
     			    Cache::decrement(USER_FEEDS_COUNT);
     				Redis::hdel(FEED_LIKES_COUNT, $feed_id);//删除点赞数
     				Redis::del(FEED_LIKES_SET . $feed_id);//删除点赞集合
-    				Redis::hdel(FEED_CONTENT_SET, $feed_id);
+    				Redis::hdel(FEED_LIST, $feed_id);
     			}
     			break;
     	}

@@ -53,6 +53,7 @@ class FollowController extends Controller
     {
     	$user = user(1024);
         $uid = $user->id;
+        $follows_table = getFollowsTable($uid);
 
         if (!Redis::sismember(USER_FOLLOWS_SET . $uid, $follow_uid)) {
             if (!DB::connection('follows')->table($follows_table)->where('uid', $uid)->where('follow_uid', $follow_uid)->count()) {

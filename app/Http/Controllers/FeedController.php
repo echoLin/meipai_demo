@@ -81,27 +81,27 @@ class FeedController extends Controller
     {
     	$uid = intval(substr($feed_id, 4,10));
     	$user = user($uid);//*
-    	// if ($uid != $user->id) {
-    	// 	return response()->json($feed_id . ' is not your feed');
-    	// }
+    	if ($uid != $user->id) {
+    		return response()->json($feed_id . ' is not your feed');
+    	}
 
-     //    $ym = substr($feed_id, 0, 4);
-    	// $feeds_table = getFeedsTable($ym);
-     //    $feeds_index_table = getFeedsIndexTable($uid);
+        $ym = substr($feed_id, 0, 4);
+    	$feeds_table = getFeedsTable($ym);
+        $feeds_index_table = getFeedsIndexTable($uid);
 
-     //    DB::beginTransaction();
-     //    try {
-     //    	DB::connection('feeds')->table($feeds_index_table)->where('uid', $uid)->where('feed_id', $feed_id)->update([
-     //    		'status' => STATUS_DELETED
-     //    		]);
-     //    	DB::connection('feeds')->table($feeds_table)->where('uid', $uid)->where('id', $feed_id)->update([
-     //    		'status' => STATUS_DELETED
-     //    		]);
-     //    	DB::commit();
-     //    } catch (Exception $e) {
-     //    	DB::rollback();
-     //    	return response()->json($e);
-     //    }
+        DB::beginTransaction();
+        try {
+        	DB::connection('feeds')->table($feeds_index_table)->where('uid', $uid)->where('feed_id', $feed_id)->update([
+        		'status' => STATUS_DELETED
+        		]);
+        	DB::connection('feeds')->table($feeds_table)->where('uid', $uid)->where('id', $feed_id)->update([
+        		'status' => STATUS_DELETED
+        		]);
+        	DB::commit();
+        } catch (Exception $e) {
+        	DB::rollback();
+        	return response()->json($e);
+        }
 
         $this->incrFeedCache($user, $feed_id, 'feeds', -1);
         //$this->dispatch(new DeleteFeed($uid, $feed_id));

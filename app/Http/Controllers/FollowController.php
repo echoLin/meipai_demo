@@ -84,7 +84,7 @@ class FollowController extends Controller
         Redis::srem(USER_FOLLOWS_SET . $uid, $follow_uid);
         Redis::srem(USER_FOLLOWS_ME_SET . $follow_uid, $uid);
 
-        $this->dispatch(new PostFollow($uid, $follow_uid));
+        $this->dispatch(new DeleteFollow($uid, $follow_uid));
 
         return response()->json($uid . ' unfollow ' . $follow_uid . ' success');
 

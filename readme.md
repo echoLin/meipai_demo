@@ -63,15 +63,14 @@
 
 	(1) -get /user
 
-	Running 30s test @ http://192.168.41.214/user
-  	4 threads and 100 connections
-  	Thread Stats   Avg      Stdev       Max    +/- Stdev
-    Latency       1.80s    134.93ms    2.00s    91.06%
-    Req/Sec      22.69      19.24    121.00     77.11%
-  	1591 requests in 30.04s, 1.25MB read
-  	Socket errors: connect 0, read 0, write 0, timeout 125
-	Requests/sec:     52.95
-	Transfer/sec:     42.55KB
+	Running 30s test @ http://192.168.41.214/user/1024
+  	2 threads and 50 connections
+  	Thread Stats   Avg        Stdev       Max         +/- Stdev
+    Latency        411.06ms   50.50ms     922.71ms     89.78%
+    Req/Sec        62.20      32.04       210.00       60.84%
+  	3630 requests in 30.02s, 2.85MB read
+	Requests/sec:    120.91
+	Transfer/sec:     97.18KB
 	
 	(2) -post /follow/{uid}
 	

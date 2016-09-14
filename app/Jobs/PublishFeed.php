@@ -41,6 +41,7 @@ class PublishFeed extends Job implements ShouldQueue
     {
         $feeds_table = getFeedsTable();
         $feeds_index_table = getFeedsIndexTable($this->user->id);
+        $time = date('Y-m-d H:i:s');
 
         DB::beginTransaction();
         try {

@@ -72,7 +72,7 @@ class FeedController extends Controller
         $feed->uid = $uid;
         $feed->content = $content;
 
-        $this->incrFeedCache($user, $feed->id, 'feeds', 1);
+        $this->incrFeedCache($user, $feed, 'feeds', 1);
         $this->dispatch(new PublishFeed($user,$feed->id, $feed->content));
         return response()->json($feed);
     }

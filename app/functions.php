@@ -8,7 +8,7 @@ function user($uid = false)
 	if (!$uid) {
 		if ($user = Auth::user())
     		return $user;
-    	$uid = rand(1,2000);
+    	$uid = rand(1,5000);
 	}
 	//Redis::del('USER_INFO');
 	if (!$user = unserialize(Redis::hget(USER_INFO, $uid))) {

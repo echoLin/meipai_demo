@@ -38,8 +38,12 @@ Route::group(['middleware' => ['web']], function () {
     Route::post('/follow/{follow_uid}', 'FollowController@add');
     Route::delete('/follow/{follow_uid}', 'FollowController@delete');
 
-    // 动态
-    Route::get('/feed/{max?}/{min?}', 'FeedController@index');
+    // 动态...
+    // /feed/0/{min} 获取关注人的最新前x条动态
+    // /feed/{max}/{min} 获取关注人在{max}和{min}之间的前x条动态
+    // /feed/0/{min}/{uid} 获取某个人的最新前x条动态
+    // /feed/{max}/{min}/{uid} 获取某人在{max}和{min}之间的前x条动态
+    Route::get('/feed/{max?}/{min?}/{uid?}', 'FeedController@index');
     Route::get('/feed/{feed_id}', 'FeedController@feed');
     Route::post('/feed', 'FeedController@add');
     Route::delete('/feed/{feed_id}', 'FeedController@delete');

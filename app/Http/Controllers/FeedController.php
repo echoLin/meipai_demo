@@ -18,22 +18,26 @@ use App\Http\Controllers\Controller;
 
 class FeedController extends Controller
 {
-    public function index ($max = 0, $min = 0)
+    public function index ($max = 0, $min = 0, $uid = false)
     {	
-	    $user = user(1024);
-	    $uid = $user->id;
+        if (!$uid) {
+    	    $user = user(1024);
+    	    $uid = $user->id;
 
-	    //1.获取用户的关注列表
-		$follow_uids = $user->getFollowsList();
-		if (!$follow_uids) {
-			return response()->json($uid  . '尚未关注任何人, 因此无可看动态');
-		}
+    	    //1.获取用户的关注列表
+    		$follow_uids = $user->getFollowsList();
+    		if (!$follow_uids) {
+    			return response()->json($uid  . ' did not follow anyone');
+    		}
+        } else {
+            $follow_uids = array($uid);
+        }
 
 		//2.获取关注用户中发布的最大最小动态ID
 		$max_id = Feed::getFeedMaxIdByUids($follow_uids);
 		$min_id = Feed::getFeedMinIdByUids($follow_uids);
 		if (!$min_id) {
-			return response()->json('您关注的人没有发布过动态呢');
+			return response()->json('You do not have any feeds');
 		}
 
     	//4.处理参照id
@@ -85,24 +89,6 @@ class FeedController extends Controller
     		return response()->json($feed_id . ' is not your feed');
     	}
 
-     //    $ym = substr($feed_id, 0, 4);
-    	// $feeds_table = getFeedsTable($ym);
-     //    $feeds_index_table = getFeedsIndexTable($uid);
-
-     //    DB::beginTransaction();
-     //    try {
-     //    	DB::connection('feeds')->table($feeds_index_table)->where('uid', $uid)->where('feed_id', $feed_id)->update([
-     //    		'status' => STATUS_DELETED
-     //    		]);
-     //    	DB::connection('feeds')->table($feeds_table)->where('uid', $uid)->where('id', $feed_id)->update([
-     //    		'status' => STATUS_DELETED
-     //    		]);
-     //    	DB::commit();
-     //    } catch (Exception $e) {
-     //    	DB::rollback();
-     //    	return response()->json($e);
-     //    }
-
         $this->incrFeedCache($user, $feed_id, 'feeds', -1);
         $this->dispatch(new DeleteFeed($uid, $feed_id));
 
@@ -116,24 +102,6 @@ class FeedController extends Controller
         if (Redis::sismember(FEED_LIKES_SET . $feed_id, $uid)) {
             return response()->json($uid . ' likes ' . $feed_id . ' already');
         }
-        // $likes_table = getLikesTable($uid);
-        // $likes_feed_table = getLikesFeedTable($feed_id);
-
-        // DB::beginTransaction();
-        // try {
-        //     DB::connection('likes')->table($likes_table)->insert([
-        //         'uid' => $uid,
-        //         'feed_id' => $feed_id,
-        //         ]);
-        //     DB::connection('likes')->table($likes_feed_table)->insert([
-        //         'uid' => $uid,
-        //         'feed_id' => $feed_id,
-        //         ]);
-        //     DB::commit();
-        // } catch (Exception $e) {
-        //     DB::rollback();
-        //     return response()->json($e);
-        // }
         
         $this->incrFeedCache($user, $feed_id, 'likes', 1);
         $this->dispatch(new PostLike($uid, $feed_id));
@@ -147,19 +115,6 @@ class FeedController extends Controller
         if (!Redis::sismember(FEED_LIKES_SET . $feed_id, $uid)) {
             return response()->json($uid . ' did not likes ' . $feed_id);
         }
-
-        // $likes_table = getLikesTable($uid);
-        // $likes_feed_table = getLikesFeedTable($feed_id);
-
-        // DB::beginTransaction();
-        // try {
-        //     DB::connection('likes')->table($likes_table)->where('uid', $uid)->where('feed_id', $feed_id)->delete();
-        //     DB::connection('likes')->table($likes_feed_table)->where('uid', $uid)->where('feed_id', $feed_id)->delete();
-        //     DB::commit();
-        // } catch (Exception $e) {
-        //     DB::rollback();
-        //     return response()->json($e);
-        // }
 
         $this->incrFeedCache($user, $feed_id, 'likes', -1);
         $this->dispatch(new DeleteLike($uid, $feed_id));

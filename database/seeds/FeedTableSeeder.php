@@ -1,6 +1,7 @@
 <?php
 
-use DB;
+use App\Feed;
+use App\User;
 use Illuminate\Database\Seeder;
 
 class FeedTableSeeder extends Seeder
@@ -16,10 +17,10 @@ class FeedTableSeeder extends Seeder
     	while ($i<5000) {
 	    	$user = user();
 	    	$ym = rand(1601, 1612);
-	        $feeds_table = getFeedsTable($ym);
-	        $feeds_index_table = getFeedsIndexTable($this->user->id);
+	        $feeds_table = Feed::getFeedsTable($ym);
+	        $feeds_index_table = getFeedsIndexTable($user->id);
 	        $time = date('Y-m-d H:i:s', rand(strtotime($ym.'01000000'), strtotime($ym, '30115959')));
-	        $feed_id = getFeedsId($user);
+	        $feed_id = Feed::getFeedsId($user->id, $ym);
 	        $feed_content = str_random(10);
 
 	        DB::beginTransaction();
@@ -45,10 +46,10 @@ class FeedTableSeeder extends Seeder
 
 	            //3.udpate user表的最大和最小feed_id
 	            if (intval(substr($feed_id, 14,5)) == 1) {
-	                $this->user->min_feed_id = $feed_id;
+	                $user->min_feed_id = $feed_id;
 	            } 
-	            $this->user->max_feed_id = $feed_id;
-	            $this->user->save();
+	            $user->max_feed_id = $feed_id;
+	            $user->save();
 
 	            //4.提交
 	            DB::commit();

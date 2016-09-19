@@ -21,8 +21,8 @@ class Feed extends Model
     }
 
     public static function getFeedsId($uid, $ym = false) {
-        $feeds_id = DB::connection('feeds')->table('feeds_id_'.sprintf("%03d", $uid%32))->insertGetId();
-        return ($ym ? $ym : substr(date('Ym'),2,4)) . sprintf("%010d", $user->id) . sprintf("%05d", $feeds_id);
+        $feeds_id = DB::connection('feeds')->table('feeds_id_'.sprintf("%03d", $uid%32))->insertGetId([]);
+        return ($ym ? $ym : substr(date('Ym'),2,4)) . sprintf("%010d", $uid) . sprintf("%05d", $feeds_id);
     }
 
     public static function getFeedsTable($ym = false)

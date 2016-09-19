@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use DB;
+use App\Feed;
 use App\Jobs\Job;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -34,7 +35,7 @@ class DeleteFeed extends Job implements ShouldQueue
     public function handle()
     {
         $ym = substr($this->feed_id, 0, 4);
-        $feeds_table = getFeedsTable($ym);
+        $feeds_table = Feed::getFeedsTable($ym);
         $feeds_index_table = getFeedsIndexTable($this->uid);
 
         DB::beginTransaction();

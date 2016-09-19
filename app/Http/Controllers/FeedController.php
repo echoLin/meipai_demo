@@ -6,7 +6,6 @@ use Cache;
 use DB;
 use App\User;
 use App\Feed;
-use App\Feedsindex;
 use App\Jobs\PublishFeed;
 use App\Jobs\DeleteFeed;
 use App\Jobs\PostLike;
@@ -21,7 +20,7 @@ class FeedController extends Controller
     public function index ($max = 0, $min = 0, $uid = false)
     {	
         if (!$uid) {
-    	    $user = user(1024);
+    	    $user = user(556);
     	    $uid = $user->id;
 
     	    //1.获取用户的关注列表
@@ -37,7 +36,7 @@ class FeedController extends Controller
 		$max_id = Feed::getFeedMaxIdByUids($follow_uids);
 		$min_id = Feed::getFeedMinIdByUids($follow_uids);
 		if (!$min_id) {
-			return response()->json('You do not have any feeds');
+			return response()->json('Do not have any feeds');
 		}
 
     	//4.处理参照id
@@ -57,10 +56,12 @@ class FeedController extends Controller
     public function feed ($feed_id)
     {
     	if (!$feed =  unserialize(Redis::hget(FEED_LIST, $feed_id))) {
-    		$feed = DB::connection('feeds')->table(getFeedsTable(substr($feed_id, 0, 4)))->where('id', $feed_id)->where('status', STATUS_CHECKED)->first();
+    		$feed = DB::connection('feeds')->table(Feed::getFeedsTable(substr($feed_id, 0, 4)))->where('id', $feed_id)->where('status', STATUS_CHECKED)->first();
     	}
-    	$feed->likes = $feed->getFeedLikesCount();
-    	$feed->user = user($feed->uid);
+        if ($feed) {
+    	   $feed->likes = Feed::getFeedLikesCount($feed->id);
+    	   $feed->user = user($feed->uid);
+        }
     	return response()->json($feed);
     }
 
@@ -72,7 +73,7 @@ class FeedController extends Controller
         $uid = $user->id;
 
         $feed = new Feed;
-        $feed->id = getFeedsId($user);
+        $feed->id = Feed::getFeedsId($user->id);
         $feed->uid = $uid;
         $feed->content = $content;
 
@@ -131,7 +132,7 @@ class FeedController extends Controller
     			$feed_id = $feed;
     			$feed = new Feed;
     			$feed->id = $feed_id;
-    			$count = $feed->getFeedLikesCount();
+    			$count = Feed::getFeedLikesCount($feed_id);
     			Redis::hincrby(FEED_LIKES_COUNT, $feed_id, $increment);
 		        if ($increment == 1) {//点赞
 		        	Redis::sadd(FEED_LIKES_SET . $feed_id, $uid);

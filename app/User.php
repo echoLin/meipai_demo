@@ -65,6 +65,7 @@ class User extends Authenticatable
         $uids = array_unique($uids);
         $users = Redis::hmget(USER_INFO, $uids);
         if (array_filter($users) != count($uids)) {
+            $else = array();
             foreach ($users as $k => $v) {
                 if (!$v) {
                     $else[] = $uids[$k];

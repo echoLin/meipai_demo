@@ -5,7 +5,6 @@ namespace App\Jobs;
 use DB;
 use App\User;
 use App\Feed;
-use App\Feedsindex;
 use App\Jobs\Job;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -38,7 +37,7 @@ class PublishFeed extends Job implements ShouldQueue
      */
     public function handle()
     {
-        $feeds_table = getFeedsTable();
+        $feeds_table = Feed::getFeedsTable();
         $feeds_index_table = getFeedsIndexTable($this->user->id);
         $time = date('Y-m-d H:i:s');
 

@@ -19,10 +19,9 @@ class FeedTableSeeder extends Seeder
 	    	$ym = rand(1601, 1612);
 	        $feeds_table = Feed::getFeedsTable($ym);
 	        $feeds_index_table = getFeedsIndexTable($user->id);
-	        $time = date('Y-m-d H:i:s', rand(strtotime($ym.'01000000'), strtotime($ym, '30115959')));
+	        $time = '2016-'.substr($ym, 2, 2).'-'.sprintf("%02d", rand(1,30)).' '.sprintf("%02d", rand(0,24)). ':' .sprintf("%02d", rand(0,60)). ':' .sprintf("%02d", rand(0,60));
 	        $feed_id = Feed::getFeedsId($user->id, $ym);
 	        $feed_content = str_random(10);
-
 	        DB::beginTransaction();
 	        try {
 	            //1.insert到feeds_xxxx

@@ -20,7 +20,7 @@ class FeedController extends Controller
     public function index ($max = 0, $min = 0, $uid = false)
     {	
         if (!$uid) {
-    	    $user = user(556);
+    	    $user = user(3);
     	    $uid = $user->id;
 
     	    //1.获取用户的关注列表
@@ -31,6 +31,8 @@ class FeedController extends Controller
         } else {
             $follow_uids = array($uid);
         }
+        //return response()->json($follow_uids);
+
 
 		//2.获取关注用户中发布的最大最小动态ID
 		$max_id = Feed::getFeedMaxIdByUids($follow_uids);
@@ -77,8 +79,7 @@ class FeedController extends Controller
         $feed->uid = $uid;
         $feed->content = $content;
 
-        $this->incrFeedCache($user, $feed, 'feeds', 1);
-        $this->dispatch(new PublishFeed($user,$feed->id, $feed->content));
+        $this->dispatch(new PublishFeed($user->id,$feed->id, $feed->content));
         return response()->json($feed);
     }
 
@@ -90,7 +91,6 @@ class FeedController extends Controller
     		return response()->json($feed_id . ' is not your feed');
     	}
 
-        $this->incrFeedCache($user, $feed_id, 'feeds', -1);
         $this->dispatch(new DeleteFeed($uid, $feed_id));
 
         return response()->json('delete ' . $feed_id . ' success');
@@ -143,28 +143,8 @@ class FeedController extends Controller
 		        	Redis::srem(FEED_LIKES_SET . $feed_id, $uid);
 		        }
     			break;
-    		case 'feeds':
-    			if ($increment == 1) {//添加动态
-    			    $feed_id = $feed->id;
-    			    //echo $feed;die();
-    				Redis::hset(FEED_LIKES_COUNT, $feed_id, 0);//初始点赞数
-    				if (intval(substr($feed_id, 14,5)) == 1) {//第一条动态
-    					Redis::hset(USER_FEEDS_MIN_ID, $uid, $feed_id);
-    				}
-    				Redis::hset(USER_FEEDS_MAX_ID, $uid, $feed_id);
-    				Cache::increment(USER_FEEDS_COUNT . $uid);
-    				Cache::increment(USER_FEEDS_REAL_COUNT . $uid);
-                    if ($user->getFollowsMeCount() >= FEED_CACHE_MIN_FOLLOWS_ME_COUNT) {//粉丝多的用户缓存动态内容
-                        Redis::hset(FEED_LIST, $this->feed->id, serialize($this->feed));
-                    }
-    			} else {//删除动态
-    			    $feed_id = $feed;
-    			    Cache::decrement(USER_FEEDS_COUNT);
-    				Redis::hdel(FEED_LIKES_COUNT, $feed_id);//删除点赞数
-    				Redis::del(FEED_LIKES_SET . $feed_id);//删除点赞集合
-    				Redis::hdel(FEED_LIST, $feed_id);
-    			}
-    			break;
+            default:
+                break;
     	}
     }
 

@@ -42,6 +42,7 @@ Route::group(['middleware' => ['web']], function () {
     // /feed/{max}/{min} 获取关注人在{max}和{min}之间的前x条动态
     // /feed/0/{min}/{uid} 获取某个人的最新前x条动态
     // /feed/{max}/{min}/{uid} 获取某人在{max}和{min}之间的前x条动态
+    // feed_id E [max,min] js需要注意取值范围，避免重复取值
     Route::get('/feeds/{max?}/{min?}/{uid?}', 'FeedController@index');
     Route::get('/feed/{feed_id}', 'FeedController@feed');
     Route::post('/feed', 'FeedController@add');

@@ -84,24 +84,30 @@ class Feed extends Model
 
     public static function loadFeeds ($uids, $max_id, $min_id)
     {
-    	if ($max_id == $min_id)
+    	if ($max_id < $min_id)
     		return array();
-    	$max_ym = substr($max_id, 0, 4);
-	    $min_ym = substr($min_id, 0, 4);
-    	$feeds_table = self::getFeedsTable($max_ym);
-    	$list = DB::connection('feeds')->table($feeds_table)->where('id', '>=', $min_id)->where('id','<', $max_id)->where('status', STATUS_CHECKED)->whereIn('uid', $uids)->take(MAX_FEED_COUNT)->orderBy('created_at','desc')->get();
-    	while (count($list) < MAX_FEED_COUNT) {
-    		//1.查找上个月的数据
-    		if ($max_ym == intval(substr($max_ym, 0, 2) . '01')) {
-    			$max_ym = (intval(substr($max_ym, 0, 2)) - 1) * 1000 + 12;
-    		} else {
-    			$max_ym -= 1;
-    		}
-    		if($max_ym < $min_ym)
-    			break;
-    		$feeds_table = self::getFeedsTable($max_ym);
-    		$list = array_merge($list, DB::connection('feeds')->table($feeds_table)->where('id', '>=', $min_id)->where('id','<', $max_id)->where('status', STATUS_CHECKED)->whereIn('uid', $uids)->take(MAX_FEED_COUNT-count($list))->orderBy('created_at','desc')->get());
-    	}
+        if ($max_id != $min_id) {
+        	$max_ym = substr($max_id, 0, 4);
+    	    $min_ym = substr($min_id, 0, 4);
+        	$feeds_table = self::getFeedsTable($max_ym);
+        	$list = DB::connection('feeds')->table($feeds_table)->where('id', '>=', $min_id)->where('id','<=', $max_id)->where('status', STATUS_CHECKED)->whereIn('uid', $uids)->take(MAX_FEED_COUNT)->orderBy('created_at','desc')->get();
+        	while (count($list) < MAX_FEED_COUNT) {
+        		//1.查找上个月的数据
+        		if ($max_ym == intval(substr($max_ym, 0, 2) . '01')) {
+        			$max_ym = (intval(substr($max_ym, 0, 2)) - 1) * 1000 + 12;
+        		} else {
+        			$max_ym -= 1;
+        		}
+        		if($max_ym < $min_ym)
+        			break;
+        		$feeds_table = self::getFeedsTable($max_ym);
+        		$list = array_merge($list, DB::connection('feeds')->table($feeds_table)->where('id', '>=', $min_id)->where('id','<=', $max_id)->where('status', STATUS_CHECKED)->whereIn('uid', $uids)->take(MAX_FEED_COUNT-count($list))->orderBy('created_at','desc')->get());
+        	}
+        } else {
+            $ym = substr($max_id, 0,4);
+            $feeds_table = self::getFeedsTable($ym);
+            $list = DB::connection('feeds')->table($feeds_table)->where('id', $max_id)->get();
+        }
     	if (!$list)
     		return array();
     	$ids = array();

@@ -49,7 +49,12 @@ class DeleteFeed extends Job implements ShouldQueue
             DB::commit();
         } catch (Exception $e) {
             DB::rollback();
+            return;
         }
+        Cache::decrement(USER_FEEDS_COUNT . $this->uid);
+        Redis::hdel(FEED_LIKES_COUNT, $this->feed_id);//删除点赞数
+        Redis::del(FEED_LIKES_SET . $this->feed_id);//删除点赞集合
+        Redis::hdel(FEED_LIST, $this->feed_id);
 
     }
 }

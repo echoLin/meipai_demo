@@ -32,4 +32,4 @@ define('FEED_LIST', '2:2');
 //2.状态
 define('STATUS_UNCHECK', 0);
 define('STATUS_CHECKED', 1);
-define('STATUS_DELETED', -1);
+define('STATUS_DELETED', 2);

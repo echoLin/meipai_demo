@@ -19,7 +19,7 @@ class FeedTableSeeder extends Seeder
     public function run()
     {
     	$i = 0;
-    	while ($i<500) {
+    	while ($i<5000) {
 	    	$this->user = user();
 	    	$ym = rand(1601, 1609);
 	        $feeds_table = Feed::getFeedsTable($ym);

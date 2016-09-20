@@ -3,6 +3,7 @@
 use App\Feed;
 use App\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Redis as Redis;
 
 class FeedTableSeeder extends Seeder
 {

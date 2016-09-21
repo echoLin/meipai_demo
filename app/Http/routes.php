@@ -13,7 +13,8 @@
 
 use Illuminate\Http\Request;
 
-Route::group(['middleware' => ['web']], function () {
+//web
+Route::group(['middleware' => []], function () {
 
 
     Route::get('/', 'MainController@index');

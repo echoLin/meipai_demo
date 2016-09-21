@@ -57,7 +57,7 @@
 
 #### Development
 	laravel 5.2
-	PHP 7.0.8
+	PHP 7.0.10
 	memcached 1.4.4
 	redis 2.4.10
 	nginx nginx/meitu1210

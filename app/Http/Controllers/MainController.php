@@ -10,6 +10,7 @@ class MainController extends Controller
 {
     public function index()
     {
-        return response()->json('success');
+    	phpinfo();
+        //return response()->json('success');
     }
 }

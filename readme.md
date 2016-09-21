@@ -57,7 +57,7 @@
 
 #### Development
 	laravel 5.2
-	PHP 7.0.10
+	PHP 7.0.8
 	memcached 1.4.4
 	redis 2.4.10
 	nginx nginx/meitu1210
@@ -67,22 +67,41 @@
 
 	1.用户基本信息（姓名、邮箱、美拍数、关注数、粉丝数）
 	-get /user/{uid?}
+		PS:/user 随机获取用户信息
 	
-	Running 30s test @ http://192.168.41.214/user/1024
-  	2 threads and 50 connections
-  	Thread Stats    Avg        Stdev     Max        +/- Stdev
-    Latency         179.90ms   38.12ms   537.26ms   84.02%
-    Req/Sec         140.21     40.77     252.00     76.64%
-  	8344 requests in 30.05s, 6.58MB read
-	Requests/sec:    277.67
-	Transfer/sec:    224.25KB
+	Running 30s test @ http://192.168.41.214/user
+  	2 threads and 30 connections
+  	Thread Stats   Avg        Stdev      Max        +/- Stdev
+    Latency        91.35ms    30.35ms    291.70ms   72.74%
+    Req/Sec        165.71     20.07      230.00     73.70%
+  	9881 requests in 30.03s, 8.12MB read
+	Requests/sec:    329.05
+	Transfer/sec:    277.00KB
 
 	
 	2.关注用户
 	-post /follow/{follow_uid}
 	
+	Running 30s test @ http://192.168.41.214/follow/2048
+  	2 threads and 30 connections
+  	Thread Stats   Avg        Stdev     Max        +/- Stdev
+    Latency        97.42ms    38.83ms   342.58ms   75.43%
+    Req/Sec        154.57     38.88     282.00     71.57%
+  	9251 requests in 30.08s, 5.89MB read
+	Requests/sec:    307.58
+	Transfer/sec:    200.54KB
+	
 	3.取关用户
 	-delete /follow/{follow_uid}
+	
+	Running 30s test @ http://192.168.41.214/follow/2048
+  	2 threads and 30 connections
+  	Thread Stats   Avg        Stdev     Max        +/- Stdev
+    Latency        99.13ms    40.97ms   423.19ms   76.17%
+    Req/Sec        153.23     36.67     260.00     71.81%
+  	9157 requests in 30.07s, 5.64MB read
+	Requests/sec:    304.50
+	Transfer/sec:    192.12KB
 	
 	4.拉取动态列表
 	-get /feed/{max?}/{min?}

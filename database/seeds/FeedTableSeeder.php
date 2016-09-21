@@ -20,7 +20,7 @@ class FeedTableSeeder extends Seeder
     public function run()
     {
     	$i = 0;
-    	while ($i<5000) {
+    	while ($i<5) {
 	    	$this->user = user();
 	    	$ym = rand(1601, 1609);
 	        $feeds_table = Feed::getFeedsTable($ym);
@@ -73,9 +73,7 @@ class FeedTableSeeder extends Seeder
 	        if ($this->user->max_feed_id == $this->user->min_feed_id) {
 	            Redis::hset(USER_FEEDS_MIN_ID, $this->user->id, $this->feed_id);
 	        }
-	        if ($this->user->max_feed_id == $this->feed_id) {
-	            Redis::hset(USER_FEEDS_MAX_ID, $this->user->id, $this->feed_id);
-	        }
+	        Redis::hset(USER_FEEDS_MAX_ID, $this->user->id, $this->user->max_feed_id);
 	        Redis::hset(USER_INFO, $this->user->id,  serialize($this->user));
 	        Redis::hset(FEED_LIKES_COUNT, $this->feed_id, 0);//初始点赞数
 	        Cache::increment(USER_FEEDS_COUNT . $this->user->id);
@@ -83,6 +81,7 @@ class FeedTableSeeder extends Seeder
 	            $feed = DB::connection('feeds')->table($feeds_table)->where('id', $this->feed_id)->first();
 	            Redis::hset(FEED_LIST, $feed->id, serialize($feed));
 	        }
+	        echo $this->user->id.PHP_EOL;
 	        $i++;
 	    }
     }

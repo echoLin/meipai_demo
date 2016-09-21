@@ -17,7 +17,8 @@ use App\Http\Controllers\Controller;
 
 class FeedController extends Controller
 {
-    public function index ($max = 0, $min = 0, $uid = false)
+    //修改了发号器之后需要重写获取动态的逻辑，因为id与时间无关了。
+    public function index ($start_time = 0, $end_time = 0, $uid = false)
     {	
         if (!$uid) {
     	    $user = user(3);
@@ -40,16 +41,8 @@ class FeedController extends Controller
 		if (!$min_id) {
 			return response()->json('Do not have any feeds');
 		}
-
-    	//4.处理参照id
-    	if ($max > 0 && $max < $max_id) {
-    		$max_id = $max;
-    	}
-    	if ($min > 0 && $min > $min_id) {
-    		$min_id = $min;
-    	}
-
-    	$feeds = Feed::loadFeeds($follow_uids, $max_id, $min_id);
+        
+    	$feeds = Feed::loadFeeds($follow_uids, $max_id, $min_id, $start_time, $end_time);
 
     	return response()->json($feeds);
 
@@ -160,6 +153,7 @@ class FeedController extends Controller
     	} else {
     		Redis::del($key);
     	}
+        return response()->json('ok');
     }
 
 }

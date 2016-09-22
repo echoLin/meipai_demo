@@ -30,7 +30,7 @@
 	-delete /follow/{follow_uid}
 	
 	4.拉取动态列表
-	-get /feed/{max?}/{min?}
+	-get /feeds/{start_time?}{end_time?}{uid?}
 	
 	5.获取动态内容
 	-get /feed/{feed_id}
@@ -51,6 +51,11 @@
     
 ## Design
 ---
+1.发布动态、删除动态、关注、取关、点赞、取消赞均使用队列  
+2.用户信息如粉丝数、关注数、动态数均使用MC缓存  
+3.动态发布者的粉丝大于FEED_CACHE_MIN_FOLLOWS_ME_COUNT时缓存动态
+4.获取动态列表采用全拉模式
+
 
 
 ### Test
@@ -104,10 +109,41 @@
 	Transfer/sec:    192.12KB
 	
 	4.拉取动态列表
-	-get /feed/{max?}/{min?}
+	-get /feed/{start_time?}/{end_time?}/{uid?}
 	
-	5.获取动态内容
+	- 随机用户拉取其关注者的动态列表
+	Running 30s test @ http://192.168.41.214/feeds
+  	2 threads and 50 connections
+  	Thread Stats   Avg        Stdev     Max        +/- Stdev
+    Latency        285.90ms   51.07ms   888.68ms   96.10%
+    Req/Sec        88.37      23.69     161.00     74.75%
+  	5249 requests in 30.08s, 40.68MB read
+	Requests/sec:    174.48
+	Transfer/sec:      1.35MB
+	
+	-拉取某一用户的动态列表
+	Running 30s test @ http://192.168.41.214/feeds/0/0/4447
+  	2 threads and 50 connections
+  	Thread Stats   Avg        Stdev     Max        +/- Stdev
+    Latency        138.83ms   74.96ms   487.47ms   61.19%
+    Req/Sec        181.26     56.22     340.00     69.63%
+  	10822 requests in 30.01s, 6.57MB read
+	Requests/sec:    360.58
+	Transfer/sec:    224.29KB
+	
+	
+	
+	5.获取某一动态内容
 	-get /feed/{feed_id}
+	Running 30s test @ http://192.168.41.214/feed/1609000000102400483
+  	2 threads and 50 connections
+  	Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   155.50ms   53.33ms 520.40ms   81.63%
+    Req/Sec   161.90     51.34   290.00     64.20%
+  	9659 requests in 30.06s, 5.62MB read
+	Requests/sec:    321.27
+	Transfer/sec:    191.37KB
+	
 	
 	6.发布动态
 	-post /feed
@@ -116,17 +152,25 @@
 	Running 30s test @ http://192.168.41.214/feed
   	2 threads and 50 connections
   	Thread Stats   Avg        Stdev     Max        +/- Stdev
-    Latency        211.73ms   37.61ms   517.61ms   69.50%
-    Req/Sec        118.32     26.24     191.00     65.83%
-  	7055 requests in 30.01s, 1.43MB read
-  	Non-2xx or 3xx responses: 7055
-	Requests/sec:    235.06
-	Transfer/sec:     48.89KB
+    Latency        140.82ms   62.72ms   601.40ms   72.25%
+    Req/Sec        180.77     53.83     343.00     74.54%
+  	10737 requests in 30.06s, 2.99MB read
+	Requests/sec:    357.18
+	Transfer/sec:    101.76KB
 	
 	7.删除动态
 	-delete /feed/{feed_id}
 	
 	Running 30s test @ http://192.168.41.214/feed/1609000000073100001
+  	2 threads and 50 connections
+  	Thread Stats   Avg        Stdev     Max        +/- Stdev
+    Latency        137.80ms   78.72ms   425.99ms   68.77%
+    Req/Sec        182.34     80.08     431.00     65.14%
+  	10873 requests in 30.04s, 2.86MB read
+	Requests/sec:    361.93
+	Transfer/sec:     97.54KB
+	
+	<!--Running 30s test @ http://192.168.41.214/feed/1609000000073100001
   	2 threads and 50 connections
   	Thread Stats   Avg       Stdev     Max        +/- Stdev
     Latency        67.67ms   46.25ms   338.26ms   62.67%
@@ -134,13 +178,31 @@
   	23326 requests in 30.06s, 4.74MB read
   	Non-2xx or 3xx responses: 23326
 	Requests/sec:    775.92
-	Transfer/sec:    161.36KB
+	Transfer/sec:    161.36KB-->
 	
 	8.点赞动态
 	-post /like/{feed_id}
 	
+	Running 30s test @ http://192.168.41.214/like/1609000000102400483
+  	2 threads and 50 connections
+  	Thread Stats   Avg       Stdev     Max        +/- Stdev
+    Latency       108.06ms   59.05ms   555.27ms   66.64%
+    Req/Sec       236.16     76.19     455.00     71.16%
+  	14090 requests in 30.07s, 3.76MB read
+	Requests/sec:    468.51
+	Transfer/sec:    127.99KB
+	
 	9.取赞动态
 	-delete /like/{feed_id}
+	
+	Running 30s test @ http://192.168.41.214/like/1609000000102400483
+  	2 threads and 50 connections
+  	Thread Stats   Avg        Stdev     Max        +/- Stdev
+    Latency        110.25ms   28.91ms   301.28ms   77.90%
+    Req/Sec        227.43     46.96     353.00     76.81%
+  	13575 requests in 30.01s, 3.63MB read
+	Requests/sec:    452.34
+	Transfer/sec:    123.86KB
 
 
 #### Data
@@ -342,9 +404,7 @@ PHP框架越重，性能相对就越低，因为重型框架会在解析时调�
 		 这样PHP会把自身的text段以及内存分配中的huge都采用大内存页来保存，减少TLB miss，从而提高性能。
 	- （3）使用最新的编译器，我使用了gcc4.8.2  
 		只有4.8以上PHP才会开启Global Register for opline end execute_data支持。
+		
 * 3.优化laravel框架
-	- (1) Stone  
-		[git](https://github.com/StoneGroup/stone)  
-		[文档]()  
-		[使用教程](https://segmentfault.com/a/1190000005826835)
-	- (2) [LaravelFly]()
+	- (1) Stone  [git](https://github.com/StoneGroup/stone) [文档](https://chefxu.gitbooks.io/stone-docs/content/install_stone_in_laravel5.html)  [使用教程](https://segmentfault.com/a/1190000005826835)
+	- (2) [LaravelFly](https://github.com/scil/LaravelFly)

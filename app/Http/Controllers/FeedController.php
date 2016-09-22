@@ -52,11 +52,9 @@ class FeedController extends Controller
     {
     	if (!$feed =  unserialize(Redis::hget(FEED_LIST, $feed_id))) {
     		$feed = DB::connection('feeds')->table(Feed::getFeedsTable(substr($feed_id, 0, 4)))->where('id', $feed_id)->where('status', STATUS_CHECKED)->first();
-    	}
-        if ($feed) {
-    	   $feed->likes = Feed::getFeedLikesCount($feed->id);
-    	   $feed->user = user($feed->uid);
+    	    $feed->likes = Feed::getFeedLikesCount($feed->id);
         }
+        $feed->user = user($feed->uid);
     	return response()->json($feed);
     }
 
@@ -125,12 +123,15 @@ class FeedController extends Controller
     			$feed_id = $feed;
     			$feed = new Feed;
     			$feed->id = $feed_id;
-    			$count = Feed::getFeedLikesCount($feed_id);
     			Redis::hincrby(FEED_LIKES_COUNT, $feed_id, $increment);
 		        if ($increment == 1) {//点赞
 		        	Redis::sadd(FEED_LIKES_SET . $feed_id, $uid);
-		        	if (Redis::hget(FEED_LIKES_COUNT, $feed_id) >= FEED_CACHE_MIN_LIKES_COUNT) {
-			        	Redis::hsetnx(FEED_LIST, $feed_id, serialize($feed));
+		        	if ($count=Redis::hget(FEED_LIKES_COUNT, $feed_id) >= FEED_CACHE_MIN_LIKES_COUNT) {
+			        	if (!$feed =  unserialize(Redis::hget(FEED_LIST, $feed_id))) {
+                            $feed = DB::connection('feeds')->table(Feed::getFeedsTable(substr($feed_id, 0, 4)))->where('id', $feed_id)->where('status', STATUS_CHECKED)->first();
+                        }
+                        $feed->likes = $count;
+                        Redis::hset(FEED_LIST, $feed_id, serialize($feed));
 			        }
 		        } else {//取消赞
 		        	Redis::srem(FEED_LIKES_SET . $feed_id, $uid);

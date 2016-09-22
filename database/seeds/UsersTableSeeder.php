@@ -13,7 +13,7 @@ class UsersTableSeeder extends Seeder
     public function run()
     {
     	$i = 0;
-    	while ($i<1000) {
+    	while ($i<5000) {
             $user = new User;
             $user->name = str_random(10);
             $user->email = str_random(10).'@gmail.com';

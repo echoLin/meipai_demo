@@ -20,12 +20,12 @@ class FeedTableSeeder extends Seeder
     public function run()
     {
     	$i = 0;
-    	while ($i<5) {
+    	while ($i<20000) {
 	    	$this->user = user();
 	    	$ym = rand(1601, 1609);
 	        $feeds_table = Feed::getFeedsTable($ym);
 	        $feeds_index_table = getFeedsIndexTable($this->user->id);
-	        $time = '2016-'.substr($ym, 2, 2).'-'.sprintf("%02d", rand(1,30)).' '.sprintf("%02d", rand(0,23)). ':' .sprintf("%02d", rand(0,59)). ':' .sprintf("%02d", rand(0,59));
+	        $time = '2016-'.substr($ym, 2, 2).'-'.sprintf("%02d", ($ym == 1609 ? rand(1,22) : rand(1,30))).' '.sprintf("%02d", rand(0,23)). ':' .sprintf("%02d", rand(0,59)). ':' .sprintf("%02d", rand(0,59));
 	        $this->feed_id = Feed::getFeedsId($this->user->id, $ym);
 	        $this->content = str_random(10);
 

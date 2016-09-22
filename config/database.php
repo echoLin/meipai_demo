@@ -62,7 +62,7 @@ return [
             'collation' => 'utf8_unicode_ci',
             'prefix'    => '',
             'strict'    => false,
-            'engine'    => env('DB_MEIPAI_ENGIN',null),
+            'engine'    => env('DB_MEIPAI_ENGINE',null),
         ],
 
         'follows' => [
@@ -75,7 +75,7 @@ return [
             'collation' => 'utf8_unicode_ci',
             'prefix'    => '',
             'strict'    => false,
-            'engine'    => env('DB_FOLLOWS_ENGIN',null),
+            'engine'    => env('DB_FOLLOWS_ENGINE',null),
         ],
 
         'lives' => [
@@ -88,7 +88,7 @@ return [
             'collation' => 'utf8_unicode_ci',
             'prefix'    => '',
             'strict'    => false,
-            'engine'    => env('DB_LIVES_ENGIN',null),
+            'engine'    => env('DB_LIVES_ENGINE',null),
         ],
 
         'feeds' => [
@@ -101,7 +101,7 @@ return [
             'collation' => 'utf8_unicode_ci',
             'prefix'    => '',
             'strict'    => false,
-            'engine'    => env('DB_FEEDS_ENGIN',null),
+            'engine'    => env('DB_FEEDS_ENGINE',null),
         ],
 
         'likes' => [
@@ -114,7 +114,7 @@ return [
             'collation' => 'utf8_unicode_ci',
             'prefix'    => '',
             'strict'    => false,
-            'engine'    => env('DB_LIKES_ENGIN',null),
+            'engine'    => env('DB_LIKES_ENGINE',null),
         ],
 
         'mysql' => [

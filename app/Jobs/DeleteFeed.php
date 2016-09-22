@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use DB;
+use Cache;
 use App\Feed;
 use App\Jobs\Job;
 use Illuminate\Queue\SerializesModels;

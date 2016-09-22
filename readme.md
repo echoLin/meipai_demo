@@ -321,3 +321,30 @@
   	UNIQUE KEY `likes_feed_xxxx_uid_feed_id_unique` (`uid`,`feed_id`),
   	KEY `likes_feed_xxxx_feed_id_index` (`feed_id`)
 	) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+	
+	
+
+
+###瓶颈
+PHP框架越重，性能相对就越低，因为重型框架会在解析时调用非常多的类、方法和自定义函数，导致性能严重下降。
+
+#####性能提升：
+
+* 1.使用最新的PHP7，laravel在php7下的性能比原先的5.6提高了54%。
+* 2.让PHP7更快([鸟哥的博客](http://www.laruence.com/2015/12/04/3086.html))
+	- （1）启用Zend Opcache
+	- （2）开启HugePages,然后开启Opcache的huge_code_pages  
+	  	 `sudo sysctl vm.nr_hugepages=512	`     
+	 	 `cat /proc/meminfo | grep Huge`     
+		 分配512个预留的大页内存  
+		 然后在php.ini中加入  
+		 `opcahce.huge_code_pages=1`  
+		 这样PHP会把自身的text段以及内存分配中的huge都采用大内存页来保存，减少TLB miss，从而提高性能。
+	- （3）使用最新的编译器，我使用了gcc4.8.2  
+		只有4.8以上PHP才会开启Global Register for opline end execute_data支持。
+* 3.优化laravel框架
+	- (1) Stone  
+		[git](https://github.com/StoneGroup/stone)  
+		[文档]()  
+		[使用教程](https://segmentfault.com/a/1190000005826835)
+	- (2) [LaravelFly]()

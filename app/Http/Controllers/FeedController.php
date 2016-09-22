@@ -126,7 +126,7 @@ class FeedController extends Controller
     			Redis::hincrby(FEED_LIKES_COUNT, $feed_id, $increment);
 		        if ($increment == 1) {//点赞
 		        	Redis::sadd(FEED_LIKES_SET . $feed_id, $uid);
-		        	if ($count=Redis::hget(FEED_LIKES_COUNT, $feed_id) >= FEED_CACHE_MIN_LIKES_COUNT) {
+		        	if (($count=Redis::hget(FEED_LIKES_COUNT, $feed_id)) >= FEED_CACHE_MIN_LIKES_COUNT) {
 			        	if (!$feed =  unserialize(Redis::hget(FEED_LIST, $feed_id))) {
                             $feed = DB::connection('feeds')->table(Feed::getFeedsTable(substr($feed_id, 0, 4)))->where('id', $feed_id)->where('status', STATUS_CHECKED)->first();
                         }

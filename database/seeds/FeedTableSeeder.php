@@ -81,7 +81,6 @@ class FeedTableSeeder extends Seeder
 	            $feed = DB::connection('feeds')->table($feeds_table)->where('id', $this->feed_id)->first();
 	            Redis::hset(FEED_LIST, $feed->id, serialize($feed));
 	        }
-	        echo $this->user->id.PHP_EOL;
 	        $i++;
 	    }
     }

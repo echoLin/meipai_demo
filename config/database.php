@@ -78,19 +78,6 @@ return [
             'engine'    => env('DB_FOLLOWS_ENGINE',null),
         ],
 
-        'lives' => [
-            'host' => env('DB_LIVES_HOST', 'localhost'),
-            'driver'    => 'mysql',
-            'database'  => env('DB_LIVES_DATABASE', 'forge'),
-            'username'  => env('DB_LIVES_USERNAME', 'forge'),
-            'password'  => env('DB_LIVES_PASSWORD', ''),
-            'charset'   => 'utf8',
-            'collation' => 'utf8_unicode_ci',
-            'prefix'    => '',
-            'strict'    => false,
-            'engine'    => env('DB_LIVES_ENGINE',null),
-        ],
-
         'feeds' => [
             'host' => env('DB_FEEDS_HOST', 'localhost'),
             'driver'    => 'mysql',
@@ -127,7 +114,7 @@ return [
             'collation' => 'utf8_unicode_ci',
             'prefix'    => '',
             'strict'    => false,
-            'engine'    => null,
+            'engine'    => 'InnoDB',
         ],
 
         'pgsql' => [

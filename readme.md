@@ -256,7 +256,10 @@
 #### Development
 	laravel 5.2
 	PHP 7.0.10
-	memcached 1.4.4
+	memcached 1.4.4 
+		-p:11211
+		-c:1024
+		-m:63MB
 	redis 2.4.10
 	nginx nginx/meitu1210
 	mysql Ver 14.14 Distrib 5.1.73, for redhat-linux-gnu (x86_64) using readline 5.1
@@ -436,7 +439,9 @@ PHP框架越重，性能相对就越低，因为重型框架会在解析时调�
 	
 #####瓶颈
 1.框架的瓶颈。laravel封装过重，实际开发中还是使用轻框架如yaf或自定义框架为上策。  
-2.读写的瓶颈。demo中没有使用主从分离。
+2.发号器的优化。  
+3.读写的瓶颈。demo中没有使用主从同步。  
+4.分布式事务最终一致性。
 
 
 	

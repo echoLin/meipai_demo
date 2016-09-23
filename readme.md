@@ -366,16 +366,6 @@
 	Requests/sec:    361.93
 	Transfer/sec:     97.54KB
 	
-	<!--Running 30s test @ http://192.168.41.214/feed/1609000000073100001
-  	2 threads and 50 connections
-  	Thread Stats   Avg       Stdev     Max        +/- Stdev
-    Latency        67.67ms   46.25ms   338.26ms   62.67%
-    Req/Sec        390.14    104.40    727.00     73.46%
-  	23326 requests in 30.06s, 4.74MB read
-  	Non-2xx or 3xx responses: 23326
-	Requests/sec:    775.92
-	Transfer/sec:    161.36KB-->
-	
 	8.点赞动态
 	-post /like/{feed_id}
 	

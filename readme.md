@@ -55,7 +55,7 @@
 1.发布动态、删除动态、关注、取关、点赞、取消赞均使用队列  
 2.用户信息如粉丝数、关注数、动态数均使用MC缓存  
 3.动态发布者的粉丝大于FEED_CACHE_MIN_FOLLOWS_ME_COUNT时缓存动态  
-4.获取动态列表采用全拉模式
+4.获取动态列表采用全拉模式  
 5.动态id发号器:根据uid%32插入表feeds_id得到自增id,动态id=ym+uid+自增id
 
 
@@ -421,12 +421,21 @@ PHP框架越重，性能相对就越低，因为重型框架会在解析时调�
 		
 * 3.优化laravel框架
 	- (1) Stone  [git](https://github.com/StoneGroup/stone) [文档](https://chefxu.gitbooks.io/stone-docs/content/install_stone_in_laravel5.html)  [使用教程](https://segmentfault.com/a/1190000005826835)  
-		Stone依赖于swoole和runkit扩展，而runkit暂不支持php7,github上虽有runkit7，但是并不是对所有7.0.x都支持。
-	- (2) [LaravelFly](https://github.com/scil/LaravelFly)  
+	
+		Stone主要的优化点是框架的初始化和释放。Stone作为独立的进程单独启动，在框架资源初始化结束后再开启FastCGI服务，这样，新的请求过来是直接从资源是直接从资源初始化结束后的状态开始，避免每次请求去做资源初始化的事情。
+		
+		Stone的风险：Stone是常驻内存的，Stone中cookie都被维护在一个数组中，在原来的PHP-FPM下，不会有任何问题，因为请求结束后将释放所有资源，但Stone内存之后，请求的资源没有在请求结束释放，因为cookie对象呗IOC容器引用，PHP GC不会回收这部分内存，因此下一个请求再使用Cookie的时候获取的是同一个Cookie对象。
+
+	
+		Stone依赖于swoole和runkit扩展，而runkit暂不支持php7,github上虽有runkit7，但是并不是对所有7.0.x都支持。  
+		
+		 在本demo中原想使用Stone,但是，由于runkit7对php7.0.10好像并不支持，扩展的时候报错。根据Stone的测试数据来看，使用Stone可以带来喜人的性能优化，值得一试。    
+		 
+	- (2) [LaravelFly](https://github.com/scil/LaravelFly)    
 	
 	
 #####瓶颈
-1.框架的瓶颈。laravel封装过重，实际开发中还是使用轻框架如yaf或自定义框架为上策。
+1.框架的瓶颈。laravel封装过重，实际开发中还是使用轻框架如yaf或自定义框架为上策。  
 2.读写的瓶颈。demo中没有使用主从分离。
 
 

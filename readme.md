@@ -60,6 +60,9 @@
 
 
 ### Database
+	User 5k
+	Follow 10w
+	Feed 2w
 #### meipai
 - User
 
@@ -86,7 +89,7 @@
 	`updated_at` timestamp NULL DEFAULT NULL,
 	PRIMARY KEY (`id`),
 	UNIQUE KEY `users_email_unique` (`email`)
-	)ENGINE=MyISAM AUTO_INCREMENT=5001 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+	)ENGINE=InnoDB AUTO_INCREMENT=5001 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 	
 
 #### follows 关系库
@@ -100,7 +103,7 @@
 | created_at   | timestamp      | 创建时间              |
 | updated_at   | timestamp      | 更新时间              |
 
-	PS: xxxx =  uid % 2014;
+	PS: xxxx =  uid % 1024;
 	
 	CREATE TABLE `follows_xxxx` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -109,7 +112,7 @@
 	`updated_at` timestamp NULL DEFAULT NULL,
 	PRIMARY KEY (`id`),UNIQUE KEY 
 	`follows_xxxx_uid_follow_uid_unique` (`uid`,`follow_uid`)
-	) ENGINE=MyISAM AUTO_INCREMENT=226 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+	) ENGINE=InnoDB AUTO_INCREMENT=226 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 
 - follows_me_0000 ~ follows_me_2013
@@ -132,10 +135,25 @@
 	`updated_at` timestamp NULL DEFAULT NULL,
 	PRIMARY KEY (`id`),
 	UNIQUE KEY `follows_me_xxxx_uid_follow_uid_unique`(`uid`,`follow_uid`)
-	) ENGINE=MyISAM AUTO_INCREMENT=227 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+	) ENGINE=InnoDB AUTO_INCREMENT=227 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 	
 
 #### feeds 动态库
+- feeds_id_xxx
+
+| Field        | Type           | Des              |
+| ------------ |:--------------:| ----------------:|
+| id           | bigint         | 主键              |
+
+	
+	PS: xxx = uid % 32
+	
+	CREATE TABLE `feeds_id_xxx` (
+  	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  	PRIMARY KEY (`id`)
+	) ENGINE=InnoDB AUTO_INCREMENT=595 DEFAULT CHARSET=utf8 	COLLATE=utf8_unicode_ci;
+
+
 - feeds_YYmm
 
 | Field        | Type           | Des              |
@@ -157,7 +175,7 @@
    	 PRIMARY KEY (`id`),
   	KEY `feeds_xxxx_uid_index` (`uid`),
   	KEY `feeds_xxxx_created_at_index` (`created_at`)
-	) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+	) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 
 - feeds_index_000~feeds_index_127
@@ -180,7 +198,7 @@
 	`updated_at` timestamp NULL DEFAULT NULL,
 	PRIMARY KEY (`feed_id`,`uid`),
     KEY `feeds_index_xxx_uid_index` (`uid`)
-	) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+	) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 
 #### likes 点赞库
@@ -250,38 +268,38 @@
 		PS:/user 随机获取用户信息
 	
 	Running 30s test @ http://192.168.41.214/user
-  	2 threads and 30 connections
-  	Thread Stats   Avg        Stdev      Max        +/- Stdev
-    Latency        91.35ms    30.35ms    291.70ms   72.74%
-    Req/Sec        165.71     20.07      230.00     73.70%
-  	9881 requests in 30.03s, 8.12MB read
-	Requests/sec:    329.05
-	Transfer/sec:    277.00KB
+  	2 threads and 50 connections
+  	Thread Stats   Avg        Stdev     Max        +/- Stdev
+    Latency        125.45ms   36.58ms   523.76ms   85.43%
+    Req/Sec        201.40     44.91     350.00     75.92%
+  	12025 requests in 30.07s, 5.53MB read
+	Requests/sec:    399.88
+	Transfer/sec:    188.24KB
 
 	
 	2.关注用户
 	-post /follow/{follow_uid}
 	
 	Running 30s test @ http://192.168.41.214/follow/2048
-  	2 threads and 30 connections
-  	Thread Stats   Avg        Stdev     Max        +/- Stdev
-    Latency        97.42ms    38.83ms   342.58ms   75.43%
-    Req/Sec        154.57     38.88     282.00     71.57%
-  	9251 requests in 30.08s, 5.89MB read
-	Requests/sec:    307.58
-	Transfer/sec:    200.54KB
+  	2 threads and 50 connections
+  	Thread Stats   Avg       Stdev     Max       +/- Stdev
+    Latency       133.45ms   79.50ms  408.76ms   62.58%
+    Req/Sec       191.05     71.33    404.00     69.83%
+  	11324 requests in 30.04s, 3.13MB read
+	Requests/sec:    376.97
+	Transfer/sec:    106.80KB
 	
 	3.取关用户
 	-delete /follow/{follow_uid}
 	
 	Running 30s test @ http://192.168.41.214/follow/2048
-  	2 threads and 30 connections
-  	Thread Stats   Avg        Stdev     Max        +/- Stdev
-    Latency        99.13ms    40.97ms   423.19ms   76.17%
-    Req/Sec        153.23     36.67     260.00     71.81%
-  	9157 requests in 30.07s, 5.64MB read
-	Requests/sec:    304.50
-	Transfer/sec:    192.12KB
+  	2 threads and 50 connections
+  	Thread Stats   Avg       Stdev     Max        +/- Stdev
+    Latency       159.59ms   30.48ms   339.97ms   81.22%
+    Req/Sec       156.87     45.79     274.00     65.83%
+  	9380 requests in 30.04s, 2.40MB read
+	Requests/sec:    312.21
+	Transfer/sec:     81.70KB
 	
 	4.拉取动态列表
 	-get /feed/{start_time?}/{end_time?}/{uid?}
